@@ -4,3 +4,4 @@ chest_xray
 .vscode
 features
 *.npy
+*.png
