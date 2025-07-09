@@ -1,0 +1,4 @@
+.env
+__pycache__
+chest_xray
+.vscode
