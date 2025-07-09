@@ -1,0 +1,7 @@
+{
+  "model": "svm",
+  "n_train": 5216,
+  "n_val": 16,
+  "accuracy": 0.75,
+  "f1_score": 0.8
+}
