@@ -24,7 +24,7 @@ N_QUBITS      = 2
 N_PARAMS      = 6          # 3 layers × 2 qubits
 N_ITERS       = 100
 LR            = 0.1
-RESULTS_FILE  = "quantum_experiment_results.json"
+RESULTS_FILE  = "./results/quantum_experiment_results.json"
 
 np.random.seed(SEED)
 qml.numpy.random.seed(SEED)
