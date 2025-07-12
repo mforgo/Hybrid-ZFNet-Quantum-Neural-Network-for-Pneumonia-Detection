@@ -5,3 +5,4 @@ chest_xray
 features
 *.npy
 *.png
+!final_quantum_params.npy
