@@ -17,7 +17,7 @@ from sklearn.neural_network import MLPClassifier
 parser = argparse.ArgumentParser()
 parser.add_argument("--metadata", default="data/features/metadata.csv", help="Path to metadata CSV")
 parser.add_argument("--model",    choices=["svm", "mlp"], default="svm", help="Classifier type")
-parser.add_argument("--out",      default="baseline_metrics.json",       help="Where to save metrics")
+parser.add_argument("--out",      default="./results/baseline_metrics.json",       help="Where to save metrics")
 args = parser.parse_args()
 
 # ------------------------------------------------------------------ #

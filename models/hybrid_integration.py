@@ -23,7 +23,7 @@ from pennylane import numpy as pnp
 # Configuration
 FEATURES_CSV = "data/features/metadata.csv"
 QUANTUM_PARAMS_FILE = "final_quantum_params.npy"
-RESULTS_FILE = "hybrid_integration_results.json"
+RESULTS_FILE = "./results/hybrid_integration_results.json"
 N_QUBITS = 4
 N_FEATURES = 4
 TEST_SAMPLES = 20
