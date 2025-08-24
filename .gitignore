@@ -6,3 +6,5 @@ features
 *.npy
 *.png
 !final_quantum_params.npy
+docs/
+!*.tex
