@@ -1,7 +1,3 @@
-Here’s a complete README you can drop into the project root (README.md). It’s tailored to your current codebase, your “humble notebook” constraints, and the paper you’re writing.
-
-***
-
 # Hybrid Quantum–Classical Pneumonia Detection
 
 A practical, student‑friendly research project that combines classical deep feature extraction with a compact quantum neural network for pneumonia detection from chest X‑rays. The project is in **development**
