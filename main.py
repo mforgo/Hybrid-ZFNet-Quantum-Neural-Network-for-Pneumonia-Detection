@@ -64,7 +64,7 @@ def check_and_run_preprocessing():
 # 4. Model artifact checks
 def check_artifacts():
     baseline_metrics = os.path.exists("./results/baseline_metrics.json")
-    quantum_params = os.path.exists("./results/final_quantum_params.npy")
+    quantum_params = os.path.exists("final_quantum_params.npy")
     return baseline_metrics, quantum_params
 
 # 5. Run all checks and summarize
