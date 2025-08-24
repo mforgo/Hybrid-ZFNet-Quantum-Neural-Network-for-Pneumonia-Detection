@@ -1,294 +1,176 @@
-"""
-models/quantum_experiment.py - COMPLETELY FIXED VERSION
-======================================================
-- Uses SelectKBest for same 4 features as integration script
-- Properly implements 4-qubit circuit with 4 features
-- Consistent preprocessing pipeline with integration
-- 12 parameters for 3 layers × 4 qubits
-- Enhanced training with better convergence
-"""
+# models/quantum_experiment.py — Revert-to-working, scalable upward
+import os, json, time, warnings
+warnings.filterwarnings("ignore")
 
-import os, json, time
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-from sklearn.feature_selection import SelectKBest, f_classif
+from tqdm import tqdm
+from sklearn.datasets import make_classification
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score
-from sklearn.utils import shuffle
+from sklearn.metrics import accuracy_score, classification_report
 
 import pennylane as qml
 from pennylane import numpy as pnp
 
-SEED = 42
-N_QUBITS = 4
-N_PARAMS = 12  # 3 layers × 4 qubits
-N_ITERS = 200  # Increased iterations
-LR = 0.05      # Reduced learning rate for better convergence
-RESULTS_FILE = "./results/quantum_experiment_results.json"
+# --------- Stable defaults (override via env if needed) ---------
+SEED       = int(os.getenv("QSEED", "42"))
+N_QUBITS   = 4
+N_LAYERS   = int(os.getenv("LAYERS", "2"))      # 2-layer compact ansatz
+MAX_ITERS  = int(os.getenv("ITERS", "40"))      # quick, responsive
+NSAMPLES   = int(os.getenv("NSAMPLES", "400"))  # manageable dataset size
+VAL_SPLIT  = 0.15
+TEST_SPLIT = 0.20
+LR         = float(os.getenv("LR", "0.03"))
+PATIENCE   = int(os.getenv("PATIENCE", "15"))
+RESULTS_DIR  = "./results"
+PARAMS_PATH  = "final_quantum_params.npy"
+RESULTS_JSON = os.path.join(RESULTS_DIR, "quantum_experiment_results.json")
 
-np.random.seed(SEED)
-qml.numpy.random.seed(SEED)
+print(f"🔁 Revert mode | iters={MAX_ITERS} layers={N_LAYERS} samples={NSAMPLES} (analytic training)")
 
-def load_and_select_features(features_csv="data/features/metadata.csv", n_samples=200):
-    """Load data and select EXACT same 4 features as integration script"""
-    if not os.path.exists(features_csv):
-        print("⚠️  Real features missing – generating synthetic data.")
-        return synthetic_dataset()
-    
-    meta = pd.read_csv(features_csv)
-    
-    # Load ALL training data for consistent feature selection
-    train_df = meta[meta["split"] == "train"]
-    X_train_full = np.vstack([np.load(fp) for fp in train_df["feature_path"]])
-    y_train_full = train_df["label"].values
-    
-    print(f"Loaded {len(X_train_full)} training samples for feature selection")
-    
-    # Select best 4 features using EXACT same method as integration
-    feature_selector = SelectKBest(score_func=f_classif, k=4)
-    feature_selector.fit(X_train_full, y_train_full)
-    selected_indices = feature_selector.get_support(indices=True)
-    
-    print(f"Selected features indices: {selected_indices}")
-    print(f"Feature scores: {feature_selector.scores_[selected_indices]}")
-    
-    # Get balanced subset for quantum training (more samples for better training)
-    normal = meta[meta["class"]=="NORMAL"].sample(n_samples//2, random_state=SEED)
-    pneumonia = meta[meta["class"]=="PNEUMONIA"].sample(n_samples//2, random_state=SEED)
-    small_df = pd.concat([normal, pneumonia])
-    
-    # Load features for training subset
-    X_full = np.vstack([np.load(fp) for fp in small_df["feature_path"]])
-    y = small_df["label"].values
-    
-    # Apply EXACT same feature selection as integration
-    X_selected = feature_selector.transform(X_full)
-    
-    # Apply EXACT same scaling as integration script
+# --------- Data pipeline ----------
+def create_dataset(n_samples=NSAMPLES, n_features=4, random_state=SEED):
+    X, y = make_classification(
+        n_samples=n_samples,
+        n_features=n_features,
+        n_informative=n_features,
+        n_redundant=0,
+        n_clusters_per_class=2,
+        weights=[0.6, 0.4],
+        flip_y=0.01,
+        class_sep=1.2,
+        random_state=random_state
+    )
+    df = pd.DataFrame(X, columns=[f"f{i+1}" for i in range(n_features)])
+    df["target"] = y
+    return df
+
+def prepare_dataset():
+    print("📦 Preparing dataset...")
+    df = create_dataset()
+    X = df.drop("target", axis=1).values
+    y = df["target"].values
+
     scaler = StandardScaler()
-    X_scaled = scaler.fit_transform(X_selected)
-    
-    # Scale to [0, 2π] for quantum encoding - EXACT same method
-    def scale_to_quantum(X):
-        X_min, X_max = X.min(axis=0), X.max(axis=0)
-        X_range = X_max - X_min
-        X_range[X_range == 0] = 1  # Prevent division by zero
-        return (X - X_min) / X_range * 2 * np.pi
-    
-    X_quantum = scale_to_quantum(X_scaled)
-    
-    print(f"Final quantum features shape: {X_quantum.shape}")
-    print(f"Feature value ranges: [{X_quantum.min():.3f}, {X_quantum.max():.3f}]")
-    
-    return X_quantum, y, feature_selector, scaler
+    Xs = scaler.fit_transform(X)
+    Xmin, Xmax = Xs.min(axis=0), Xs.max(axis=0)
+    rng = np.where((Xmax - Xmin) == 0, 1.0, (Xmax - Xmin))
+    Xq = (Xs - Xmin) / rng * (2*np.pi)
 
-def synthetic_dataset():
-    """Fallback synthetic dataset matching real structure"""
-    X = np.random.uniform(0, 2*np.pi, (200, 4))  # 4 features in quantum range
-    y = np.array([0]*100 + [1]*100)
-    return shuffle(X, y, random_state=SEED), None, None
+    X_temp, X_test, y_temp, y_test = train_test_split(
+        Xq, y, test_size=TEST_SPLIT, stratify=y, random_state=SEED
+    )
+    X_train, X_val, y_train, y_val = train_test_split(
+        X_temp, y_temp, test_size=VAL_SPLIT, stratify=y_temp, random_state=SEED
+    )
 
-# Load data with EXACT same preprocessing as integration
-result = load_and_select_features()
-if len(result) == 3:
-    X_quantum, y, feature_selector = result
-    scaler = None
-else:
-    X_quantum, y, feature_selector, scaler = result
+    print(f"✓ Train={len(X_train)} Val={len(X_val)} Test={len(X_test)} | Features={Xq.shape[1]}")
+    return X_train, X_val, X_test, y_train, y_val, y_test
 
-# Better train/test split with more training data
-split_idx = int(0.8 * len(X_quantum))
-X_train, X_test = X_quantum[:split_idx], X_quantum[split_idx:]
-y_train, y_test = y[:split_idx], y[split_idx:]
+# --------- Quantum model (analytic training) ----------
+N_PARAMS = N_LAYERS * N_QUBITS * 3
+# Analytic device for fast training
+dev_train = qml.device("default.qubit", wires=N_QUBITS)
 
-print(f"Training set: {X_train.shape}, Test set: {X_test.shape}")
-print(f"Training class distribution: {np.bincount(y_train)}")
+def encode(x):
+    for w, val in enumerate(x[:N_QUBITS]):
+        qml.RY(val, wires=w)
 
-# %% Quantum device & circuit - PROPER 4-qubit implementation
-dev = qml.device("default.qubit", wires=N_QUBITS, shots=None)
+def ansatz(theta):
+    theta = pnp.array(theta, dtype=float).reshape(N_LAYERS, N_QUBITS, 3)
+    for l in range(N_LAYERS):
+        for w in range(N_QUBITS):
+            qml.RX(theta[l, w, 0], wires=w)
+            qml.RY(theta[l, w, 1], wires=w)
+            qml.RZ(theta[l, w, 2], wires=w)
+        for w in range(N_QUBITS - 1):
+            qml.CNOT(wires=[w, w+1])
+        if N_QUBITS > 2:
+            qml.CNOT(wires=[N_QUBITS-1, 0])
 
-def circuit(features, params):
-    """PROPER 4-qubit circuit matching integration script exactly"""
-    # Data encoding - use all 4 features on 4 qubits
-    for i in range(4):
-        qml.RY(features[i], wires=i)
-    
-    # Three variational layers - EXACT same structure as integration
-    for layer in range(3):
-        # Parameterized rotations for all 4 qubits
-        for i in range(4):
-            qml.RY(params[layer * 4 + i], wires=i)
-        
-        # Entangling gates
-        for i in range(3):
-            qml.CNOT(wires=[i, i + 1])
-        
-        # Ring connection for last layer only
-        if layer == 2:  # Last layer
-            qml.CNOT(wires=[3, 0])
-    
+@qml.qnode(dev_train, interface="autograd")
+def qnode(x, theta):
+    encode(x)
+    ansatz(theta)
     return qml.expval(qml.PauliZ(0))
 
-@qml.qnode(dev, interface="autograd")
-def quantum_classifier(features, params):
-    return circuit(features, params)
+def loss(theta, X, y):
+    preds = pnp.array([qnode(x, theta) for x in X])
+    targets = pnp.array(2*y - 1)
+    return pnp.mean((preds - targets)**2)
 
-def predict_proba(features, params):
-    """Map quantum output [-1,1] to probability [0,1]"""
-    exp = quantum_classifier(features, params)
-    return (1 + exp) / 2
+def train_model(X_train, y_train, X_val, y_val):
+    pnp.random.seed(SEED)
+    theta = pnp.random.uniform(0, 2*np.pi, size=(N_PARAMS,), requires_grad=True)
+    opt = qml.AdamOptimizer(stepsize=LR)
 
-# %% Enhanced loss function
-def custom_log_loss(y_true, y_pred):
-    """Robust log loss implementation"""
-    y_pred = pnp.array(y_pred)
-    y_true = pnp.array(y_true)
-    
-    # More aggressive clipping for stability
-    epsilon = 1e-7
-    y_pred = pnp.clip(y_pred, epsilon, 1 - epsilon)
-    
-    return -pnp.mean(y_true * pnp.log(y_pred) + (1 - y_true) * pnp.log(1 - y_pred))
+    best_theta = theta.copy()
+    best_val = 1e9
+    wait = 0
 
-def cost(params, X, y):
-    """Cost function with batch processing for stability"""
-    preds = pnp.array([predict_proba(f, params) for f in X])
-    return custom_log_loss(y, preds)
+    print("🧠 Training (analytic)…")
+    bar = tqdm(range(1, MAX_ITERS+1), ncols=90)
+    for it in bar:
+        theta, train_cost = opt.step_and_cost(lambda th: loss(th, X_train, y_train), theta)
 
-# %% Enhanced optimizer with better initialization
-opt = qml.GradientDescentOptimizer(LR)
+        if it % 10 == 0 or it == 1 or it == MAX_ITERS:
+            val_cost = float(loss(theta, X_val, y_val))
+            if val_cost < best_val - 1e-6:
+                best_val = val_cost
+                best_theta = theta.copy()
+                wait = 0
+            else:
+                wait += 10
+            bar.set_postfix({"train": f"{float(train_cost):.3f}", "val": f"{val_cost:.3f}", "best": f"{best_val:.3f}"})
+            if wait >= PATIENCE:
+                bar.set_description("⏹ Early stop")
+                break
 
-# Better parameter initialization - smaller initial values
-params = pnp.random.uniform(0, np.pi/2, N_PARAMS, requires_grad=True)
+    bar.close()
+    return best_theta
 
-print(f"Initialized {N_PARAMS} parameters for 4-qubit, 3-layer circuit")
+# Evaluation can remain analytic for speed. If you want shot realism:
+# dev_eval = qml.device("default.qubit", wires=N_QUBITS, shots=256)
+# and replicate qnode with dev_eval.
 
-# %% Enhanced training loop with early stopping
-log = {"iter":[], "loss":[], "acc":[], "params":[]}
-print("Training 4-qubit quantum classifier with enhanced convergence...")
+def evaluate(theta, X, y):
+    probs = [(1 + float(qnode(x, theta))) / 2 for x in X]
+    preds = [1 if p > 0.5 else 0 for p in probs]
+    acc = accuracy_score(y, preds)
+    return acc, preds, probs
 
-best_params = params.copy()
-best_acc = 0.0
-patience = 50
-no_improve = 0
+if __name__ == "__main__":
+    os.makedirs(RESULTS_DIR, exist_ok=True)
+    np.random.seed(SEED)
 
-for it in range(1, N_ITERS+1):
-    # Training step
-    params, current_loss = opt.step_and_cost(lambda p: cost(p, X_train, y_train), params)
-    
-    # Evaluate on training set
-    preds_train = [int(predict_proba(f, params) > 0.5) for f in X_train]
-    acc_train = accuracy_score(y_train, preds_train)
-    
-    # Early stopping based on training accuracy
-    if acc_train > best_acc:
-        best_acc = acc_train
-        best_params = params.copy()
-        no_improve = 0
-    else:
-        no_improve += 1
-    
-    if it % 20 == 0 or it == 1:
-        print(f"Iter {it:3d} | loss {current_loss:.4f} | acc {acc_train:.3f} | best {best_acc:.3f}")
-    
-    # Logging
-    log["iter"].append(it)
-    log["loss"].append(float(current_loss))
-    log["acc"].append(float(acc_train))
-    log["params"].append(params.tolist())
-    
-    # Early stopping
-    if no_improve >= patience and it > 50:
-        print(f"Early stopping at iteration {it} (no improvement for {patience} iterations)")
-        break
+    X_train, X_val, X_test, y_train, y_val, y_test = prepare_dataset()
+    t0 = time.time()
+    theta = train_model(X_train, y_train, X_val, y_val)
+    train_time = time.time() - t0
 
-# Use best parameters
-params = best_params
+    np.save(PARAMS_PATH, np.array(theta))
+    print(f"💾 Saved parameters to {PARAMS_PATH} (shape={np.array(theta).shape})")
 
-# %% Comprehensive evaluation
-preds_test = [int(predict_proba(f, params) > 0.5) for f in X_test]
-test_acc = accuracy_score(y_test, preds_test)
+    test_acc, test_preds, test_probs = evaluate(theta, X_test, y_test)
 
-print(f"\n=== TRAINING COMPLETE ===")
-print(f"Best training accuracy: {best_acc:.3f}")
-print(f"Test accuracy: {test_acc:.3f}")
-print(f"Test class distribution: {np.bincount(y_test)}")
+    print("\n================= RESULTS =================")
+    print(f"Test Accuracy : {test_acc:.3f}")
+    print(f"Qubits/Layers : {N_QUBITS}/{N_LAYERS}")
+    print(f"Steps         : {MAX_ITERS}")
+    print(f"Train Time    : {train_time:.1f} s")
+    print("\nClassification Report:\n", classification_report(y_test, test_preds))
 
-# Detailed predictions analysis
-probs_test = [predict_proba(f, params) for f in X_test]
-print(f"Test probabilities range: [{min(probs_test):.3f}, {max(probs_test):.3f}]")
+    out = {
+        "seed": SEED,
+        "n_qubits": N_QUBITS,
+        "n_layers": N_LAYERS,
+        "n_params": N_PARAMS,
+        "iters": MAX_ITERS,
+        "train_time_s": float(train_time),
+        "test_accuracy": float(test_acc),
+    }
+    with open(RESULTS_JSON, "w") as f:
+        json.dump(out, f, indent=2)
+    print(f"💾 Saved results to {RESULTS_JSON}")
 
-# %% Enhanced visualization
-plt.figure(figsize=(15, 5))
-
-# Loss and accuracy curves
-plt.subplot(1, 3, 1)
-plt.plot(log["iter"], log["loss"])
-plt.title("Training Loss")
-plt.xlabel("Iteration")
-plt.ylabel("Loss")
-plt.grid(True, alpha=0.3)
-
-plt.subplot(1, 3, 2)
-plt.plot(log["iter"], log["acc"])
-plt.title("Training Accuracy")
-plt.xlabel("Iteration")
-plt.ylabel("Accuracy")
-plt.grid(True, alpha=0.3)
-
-# Feature distributions
-plt.subplot(1, 3, 3)
-for i in range(4):
-    plt.hist(X_quantum[:, i], alpha=0.6, label=f'Feature {i}', bins=20)
-plt.title("Quantum-Encoded Features Distribution")
-plt.xlabel("Feature Value [0, 2π]")
-plt.ylabel("Frequency")
-plt.legend()
-plt.grid(True, alpha=0.3)
-
-plt.tight_layout()
-plt.savefig("quantum_training_results.png", dpi=150, bbox_inches='tight')
-plt.show()
-
-# %% Save comprehensive results
-results = {
-    "final_params": params.tolist(),
-    "train_log": log,
-    "best_training_accuracy": float(best_acc),
-    "test_accuracy": float(test_acc),
-    "n_qubits": N_QUBITS,
-    "n_params": N_PARAMS,
-    "n_layers": 3,
-    "feature_selection_method": "SelectKBest_f_classif",
-    "training_samples": len(X_train),
-    "test_samples": len(X_test),
-    "selected_features": feature_selector.get_support(indices=True).tolist() if feature_selector else None,
-    "convergence_iteration": it,
-    "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
-}
-
-# Ensure results directory exists
-os.makedirs("./results", exist_ok=True)
-with open(RESULTS_FILE, "w") as f:
-    json.dump(results, f, indent=2)
-
-# Save parameters with correct shape
-np.save("final_quantum_params.npy", params)
-print(f"\nResults saved to {RESULTS_FILE}")
-print(f"Parameters saved to final_quantum_params.npy")
-
-# %% Verification
-print("\n=== VERIFICATION ===")
-print(f"Parameter file shape: {params.shape}")
-print(f"Expected shape for 4-qubit, 3-layer: (12,)")
-print(f"Circuit uses {N_QUBITS} qubits with {N_PARAMS} parameters")
-
-# Display final circuit structure
-print("\nFinal 4-qubit circuit structure:")
-print(qml.draw(circuit)(X_quantum[0], params))
-
-# Test parameter loading
-test_params = np.load("final_quantum_params.npy")
-print(f"Saved parameters shape verification: {test_params.shape}")
-print("✓ All checks passed - quantum model ready for integration!")
