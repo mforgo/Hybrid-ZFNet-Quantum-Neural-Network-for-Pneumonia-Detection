@@ -1,9 +1,0 @@
-{
-  "seed": 42,
-  "n_qubits": 4,
-  "n_layers": 2,
-  "n_params": 24,
-  "iters": 40,
-  "train_time_s": 296.6144139766693,
-  "test_accuracy": 0.775
-}
