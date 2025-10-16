@@ -8,3 +8,4 @@ features
 !final_quantum_params.npy
 docs/
 !*.tex
+!results/*.npy
