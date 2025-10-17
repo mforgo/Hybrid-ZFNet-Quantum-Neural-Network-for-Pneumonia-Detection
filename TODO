@@ -1,0 +1,20 @@
+- [ ] Feature Engineering & Selection
+- [ ] Quantum Cicuit Architecture
+- [ ] Data Re-uploading
+- [ ] Advaced Optimization Techniques
+- [ ] Error Mitigation
+- [ ] Hybrid Classical-Quantum Training
+
+# Week 1: Quick Wins
+- Increase layers to 3-4 (should boost accuracy by 3-5%)
+- Try mutual information feature selection instead of PCA
+- Add L2 regularization (reduces overfitting)
+
+# Week 2: Architecture
+- Implement data re-uploading (biggest potential gain: +5-10%)
+- Try different entanglement patterns (all-to-all, ring, etc.)
+
+# Week 3: Advanced
+- Ensemble of 3-5 models (+2-4% accuracy)
+- Hyperparameter sweep (learning rate, regularization)
+
