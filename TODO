@@ -1,4 +1,6 @@
 - [ ] Feature Engineering & Selection
+- [ ] Add caching for preprocessing
+- [ ] Add modes (train, test, analyze, all)
 - [ ] Quantum Cicuit Architecture
 - [ ] Data Re-uploading
 - [ ] Advaced Optimization Techniques
