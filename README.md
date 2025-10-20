@@ -13,7 +13,7 @@
 
 </div>
 
-> ⚠️ **Project Status**: This project is actively under development. Anything and everythin may and will change as research progresses.
+> ⚠️ **Project Status**: This project is actively under development. Anything and everything may and will change as research progresses.
 
 ---
 
