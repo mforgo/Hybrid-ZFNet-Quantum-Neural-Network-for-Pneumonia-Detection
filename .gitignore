@@ -5,7 +5,7 @@ chest_xray
 features
 *.npy
 *.png
-!final_quantum_params.npy
-docs/
-!*.tex
 !results/*.npy
+
+docs/
+!docs/soc.tex
