@@ -11,6 +11,7 @@
 \usepackage{titlesec}       % Úprava nadpisů
 \usepackage{csquotes}       % Pro správné uvozovky
 \usepackage[hidelinks]{hyperref} % Proklikávací obsah bez rámečků
+\usepackage{amssymb}        % Pro matematické symboly
 
 % --- NASTAVENÍ CITACÍ (ISO 690) ---
 % Pokud používáte Overleaf, ujistěte se, že máte nastavený kompiler na pdflatex nebo xelatex
@@ -194,7 +195,75 @@ Mezi hlavní problémy manuální diagnostiky patří:
 
 Právě tyto limitace otevírají prostor pro aplikaci systémů počítačového vidění a umělé inteligence. Algoritmy, jako jsou konvoluční neuronové sítě (CNN), a v kontextu této práce i hybridní kvantové sítě, mají potenciál sloužit jako "druhý pár očí", který dokáže konzistentně detekovat jemné vzory v obraze, jež mohou lidskému oku uniknout.
 
+\section{Konvoluční neuronové sítě a architektura ResNet} \label{sec:resnet}
 
+Zatímco princip konvolučních sítí (vrstvy konvoluce, aktivace a poolingu) zůstává od počátku hlubokého učení stejný, architektury sítí prošly bouřlivým vývojem. V této práci je pro extrakci příznaků využita architektura **ResNet-50** (Residual Network), která představuje zlomový bod v designu hlubokých neuronových sítí. Tento model, představený Kaimingem He a kolektivem z Microsoft Research v roce 2015, zvítězil v soutěži ILSVRC s chybovostí pod 3,6 \%, čímž překonal lidskou schopnost klasifikace \cite{resnet_paper}.
+
+\subsection{Problém mizejícího gradientu a degradace}
+S rostoucí hloubkou neuronových sítí se historicky objevoval problém tzv. mizejícího gradientu (vanishing gradient). Při zpětném šíření chyby (backpropagation) přes mnoho vrstev se derivace postupně zmenšovaly k nule, což znemožňovalo efektivní učení prvních vrstev sítě. Paradoxně, přidávání dalších vrstev vedlo k horším výsledkům nejen na testovací, ale i na trénovací sadě – tento jev je znám jako problém degradace (degradation problem).
+
+\subsection{Reziduální učení a skip connections}
+Architektura ResNet řeší tento problém zavedením tzv. \textit{reziduálních bloků} a zkratkových spojení (skip connections nebo identity shortcuts).
+
+V klasické síti se vrstva snaží naučit přímé mapování $H(x)$. ResNet však přeformulovává úlohu tak, aby vrstvy aproximovaly pouze reziduální (zbytkovou) funkci $F(x) = H(x) - x$. Výsledná funkce bloku je pak definována jako:
+\begin{equation}
+    H(x) = F(x) + x
+\end{equation}
+kde $x$ je vstup do bloku a $F(x)$ je transformace provedená váhami vrstvy.
+
+Tento „zkratkový spoj“ umožňuje, aby se gradient během zpětného šíření mohl přenášet napříč sítí bez modifikace. Pokud by optimální transformací byla identita (tj. vrstva by neměla dělat nic), pro síť je snazší naučit se váhy směřující k nule ($F(x) \to 0$) než se snažit napodobit identitu v nelineárních vrstvách.
+
+
+
+\subsection{Specifika modelu ResNet-50}
+Model ResNet-50, použitý v této práci, je hluboký 50 vrstev. Na rozdíl od mělčích variant (např. ResNet-34) využívá tzv. **Bottleneck architekturu**. Každý reziduální blok se skládá ze tří konvolucí namísto dvou:
+\begin{itemize}
+    \item $1 \times 1$ konvoluce (redukce dimenze),
+    \item $3 \times 3$ konvoluce (samotná filtrace),
+    \item $1 \times 1$ konvoluce (obnovení dimenze).
+\end{itemize}
+Toto uspořádání výrazně snižuje počet parametrů a výpočetní náročnost, což umožňuje trénovat hlubší sítě efektivněji.
+
+V našem hybridním modelu využíváme ResNet-50 bez poslední plně propojené vrstvy (tzv. headless model). Síť transformuje vstupní rentgenový snímek do vektoru příznaků o vysoké úrovni abstrakce, který následně slouží jako vstup pro kvantový variační obvod.
+
+\section{Úvod do kvantového počítání} \label{sec:kvantove_pocitani}
+
+Zatímco klasické počítače, na kterých běží tradiční neuronové sítě, zpracovávají informace v bitech, kvantové počítače využívají principů kvantové mechaniky, jako je superpozice a provázání (entanglement). Základní informační jednotkou je kvantový bit, zkráceně \textbf{qubit} \cite{nielsen_chuang}.
+
+\subsection{Qubit a superpozice}
+Klasický bit se může nacházet pouze v jednom ze dvou diskrétních stavů: 0 nebo 1. Naproti tomu qubit může existovat v tzv. superpozici obou těchto stavů současně. Matematicky qubit reprezentujeme jako vektor v dvourozměrném Hilbertově prostoru. Používáme k tomu Diracovu "ket" notaci:
+
+\begin{equation}
+    |\psi\rangle = \alpha|0\rangle + \beta|1\rangle4
+\end{equation}
+
+kde $|0\rangle$ a $|1\rangle$ jsou bázové stavy (odpovídající klasické 0 a 1) a koeficienty $\alpha, \beta \in \mathbb{C}$ jsou komplexní amplitudy pravděpodobnosti. Pro tyto amplitudy musí platit normalizační podmínka:
+
+\begin{equation}
+    |\alpha|^2 + |\beta|^2 = 1
+\end{equation}
+
+To znamená, že pokud změříme qubit ve stavu superpozice, "zhroutí" se do stavu $|0\rangle$ s pravděpodobností $|\alpha|^2$ nebo do stavu $|1\rangle$ s pravděpodobností $|\beta|^2$. Právě tato pravděpodobnostní povaha je zásadním rozdílem oproti deterministickému klasickému bitu.
+
+\subsection{Blochova sféra}
+Pro vizualizaci stavu jednoho qubitu se často využívá geometrická reprezentace zvaná Blochova sféra (Obrázek \ref{fig:bloch}). Libovolný čistý stav qubitu lze zapsat pomocí úhlů $\theta$ a $\phi$ jako bod na povrchu koule o poloměru 1:
+
+\begin{equation}
+    |\psi\rangle = \cos\left(\frac{\theta}{2}\right)|0\rangle + e^{i\phi}\sin\left(\frac{\theta}{2}\right)|1\rangle
+\end{equation}
+
+Tato reprezentace je klíčová pro pochopení fungování kvantových neuronových sítí. Trénování sítě v podstatě znamená hledání optimálních rotací stavového vektoru na této sféře tak, aby při měření dopadl výsledek do požadované třídy (např. "pneumonie").
+
+\subsection{Kvantová hradla (Quantum Gates)}
+Stejně jako klasické počítače používají logická hradla (AND, OR, NOT), kvantové algoritmy jsou sestaveny z kvantových hradel, která provádějí unitární operace na qubitech.
+\begin{itemize}
+    \item \textbf{Hadamardovo hradlo (H):} Vytváří superpozici. Mění stav $|0\rangle$ na $\frac{|0\rangle + |1\rangle}{\sqrt{2}}$, což dává 50\% šanci na změření 0 nebo 1.
+    \item \textbf{Rotační hradla ($R_x, R_y, R_z$):} Tato hradla otáčejí qubit kolem os x, y nebo z na Blochově sféře o určitý úhel. V kontextu variačních kvantových obvodů (VQC) jsou právě úhly těchto rotací těmi parametry (ahami), které se síť učí během tréninku.
+    \item \textbf{CNOT (Controlled-NOT):} Dvouqubitové hradlo, které je nezbytné pro vytvoření kvantového provázání. Pokud je řídicí qubit ve stavu $|1\rangle$, otočí cílový qubit (operace NOT).
+\end{itemize}
+
+\subsection{Kvantové provázání (Entanglement)}
+Provázání je jev, kdy se stavy dvou nebo více qubitů stanou na sobě závislými takovým způsobem, že stav celého systému nelze popsat pouze popisem stavů jednotlivých qubitů. Pokud změříme jeden z provázaných qubitů, okamžitě tím získáme informaci o druhém, a to bez ohledu na vzdálenost mezi nimi. V strojovém učení umožňuje entanglement zachytit složité korelace mezi daty, které jsou pro klasické modely výpočetně náročné.
 
 \chapter{Cíle práce} \label{chap:cile}
 % [cite: 110-114]
@@ -222,6 +291,13 @@ Stručné shrnutí, naplnění cílů, přínos práce. Rozsah cca 1 strana.
 
 % ================= LITERATURA [cite: 151-190] =================
 \printbibliography[title={Seznam použité literatury}]
+% @inproceedings{resnet_paper,
+%   title={Deep residual learning for image recognition},
+%   author={He, Kaiming and Zhang, Xiangyu and Ren, Shaoqing and Sun, Jian},
+%   booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
+%   pages={770--778},
+%   year={2016}
+% }
 % Poznámka: SOČ preferuje ISO 690.
 
 % ================= SEZNAM ZKRATEK [cite: 191-197] =================
