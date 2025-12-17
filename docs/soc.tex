@@ -158,13 +158,49 @@ Tato práce se pokouší na tuto otázku odpovědět prostřednictvím návrhu h
 
 \chapter{Teoretická část} \label{chap:teorie}
 % [cite: 98-109]
-Literární rešerše. Shrňte současný stav poznání. Důsledně citujte zdroje \cite{sample_ref}. Rozsah cca 1/3 práce.
+\section{Medicínská východiska} \label{sec:medicina}
+
+Pneumonie, běžně označovaná jako zápal plic, představuje jedno z nejrozšířenějších a nejzávažnějších respiračních onemocnění celosvětově. Jedná se o akutní zánětlivý proces postihující plicní parenchym, konkrétně plicní sklípky (alveoly) a terminální bronchioly, které se v důsledku zánětu plní tekutinou a hnisem. Tento stav výrazně omezuje schopnost plic absorbovat kyslík, což vede k respirační nedostatečnosti \cite{who_pneumonia}. Podle statistik Světové zdravotnické organizace (WHO) patří pneumonie mezi hlavní příčiny úmrtí dětí do pěti let a představuje významné riziko pro seniory a imunokompromitované pacienty.
+
+\subsection{Etiologie a klasifikace}
+Původci onemocnění mohou být různého charakteru, přičemž správná identifikace patogenu je klíčová pro zvolení adekvátní léčby. Nejčastěji se setkáváme s pneumonií:
+\begin{itemize}
+    \item \textbf{Bakteriální:} Nejběžnějším původcem je \textit{Streptococcus pneumoniae}. Tento typ se často projevuje náhlým nástupem a na rentgenových snímcích mívá charakteristický obraz lobární konsolidace (postižení celého laloku).
+    \item \textbf{Virovou:} Způsobenou viry chřipky (Influenza), RSV nebo koronaviry (např. SARS-CoV-2). Virové pneumonie mají tendenci vykazovat difuznější nález a postihovat interstitium (vazivovou tkáň plic) \cite{radiology_viral_vs_bacterial}.
+    \item \textbf{Atypickou a mykotickou:} Způsobenou méně běžnými organismy, jako jsou mykoplazmata nebo houby.
+\end{itemize}
+
+\subsection{Diagnostika pomocí skiagrafie hrudníku}
+Ačkoliv je výpočetní tomografie (CT) považována za citlivější metodu pro detailní zobrazení plicních patologií, základním pilířem diagnostiky zůstává konvenční skiagrafie hrudníku (rentgen, CXR). Důvody jsou pragmatické: rentgenové vyšetření je rychlé, levné, široce dostupné a vystavuje pacienta výrazně nižší dávce ionizujícího záření než CT \cite{chest_xray_diagnosis}.
+
+Na rentgenovém snímku se zdravá plicní tkáň, která je naplněná vzduchem, jeví jako tmavá oblast (radiolucentní). Naopak patologické procesy spojené s pneumonií, jako jsou zánětlivé výpotky a buněčná infiltrace, absorbují rentgenové záření více, a proto se na snímku zobrazují jako světlá až bílá zastínění (opacity).
+
+Lékař-radiolog při popisu snímku hledá specifické příznaky:
+\begin{itemize}
+    \item \textbf{Konsolidace:} Oblast plic, kde byl vzduch nahrazen tekutinou, jevící se jako jasná bílá skvrna.
+    \item \textbf{Vzdušný bronchogram:} Viditelné průdušky procházející zkonsolidovanou tkání.
+    \item \textbf{Infiltráty:} Méně ohraničená zastínění, která mohou být skvrnitá nebo difuzní.
+\end{itemize}
+
+\subsection{Limitace manuální diagnostiky a role AI}
+Interpretace rentgenových snímků je vysoce náročný proces, který vyžaduje zkušeného radiologa. I přesto je tento proces zatížen určitou mírou subjektivity. Studie ukazují, že shoda mezi různými radiology (inter-observer variability) není stoprocentní, zejména u hraničních nálezů nebo u snímků s nízkým kontrastem \cite{radiologist_error_rate}.
+
+Mezi hlavní problémy manuální diagnostiky patří:
+\begin{enumerate}
+    \item \textbf{Vizuální podobnost patologií:} Obraz pneumonie může být snadno zaměnitelný s jinými stavy, jako je edém plic, atelektáza nebo plicní fibróza.
+    \item \textbf{Lidský faktor:} Únava lékařů při vyhodnocování velkého množství snímků (např. během epidemií) zvyšuje riziko přehlédnutí nálezu (falešná negativita).
+    \item \textbf{Dostupnost expertů:} V rozvojových zemích nebo odlehlých oblastech může být nedostatek kvalifikovaných radiologů kritický.
+\end{enumerate}
+
+Právě tyto limitace otevírají prostor pro aplikaci systémů počítačového vidění a umělé inteligence. Algoritmy, jako jsou konvoluční neuronové sítě (CNN), a v kontextu této práce i hybridní kvantové sítě, mají potenciál sloužit jako "druhý pár očí", který dokáže konzistentně detekovat jemné vzory v obraze, jež mohou lidskému oku uniknout.
+
+
 
 \chapter{Cíle práce} \label{chap:cile}
 % [cite: 110-114]
 Definujte hlavní a dílčí cíle. Stanovte hypotézy nebo výzkumné otázky.
 
-\chapter{Metodika / Experimentální část} \label{chap:metodika}
+\chapter{Metodika} \label{chap:metodika}
 % [cite: 115-122]
 Popis materiálu, dat a metod. Musí být reprodukovatelné.
 \begin{equation}
