@@ -12,6 +12,7 @@
 \usepackage{csquotes}       % Pro správné uvozovky
 \usepackage[hidelinks]{hyperref} % Proklikávací obsah bez rámečků
 \usepackage{amssymb}        % Pro matematické symboly
+\usepackage{amsmath}        % Pro matematické prostředí
 
 % --- NASTAVENÍ CITACÍ (ISO 690) ---
 % Pokud používáte Overleaf, ujistěte se, že máte nastavený kompiler na pdflatex nebo xelatex
@@ -265,6 +266,52 @@ Stejně jako klasické počítače používají logická hradla (AND, OR, NOT), 
 \subsection{Kvantové provázání (Entanglement)}
 Provázání je jev, kdy se stavy dvou nebo více qubitů stanou na sobě závislými takovým způsobem, že stav celého systému nelze popsat pouze popisem stavů jednotlivých qubitů. Pokud změříme jeden z provázaných qubitů, okamžitě tím získáme informaci o druhém, a to bez ohledu na vzdálenost mezi nimi. V strojovém učení umožňuje entanglement zachytit složité korelace mezi daty, které jsou pro klasické modely výpočetně náročné.
 
+\section{Kvantové strojové učení (QML)} \label{sec:qml}
+
+Kvantové strojové učení je interdisciplinární oblast, která zkoumá možnosti využití kvantových algoritmů k vylepšení metod umělé inteligence. V kontextu současné éry NISQ se jako nejslibnější směr jeví tzv. **hybridní kvantově-klasické algoritmy**. Tyto algoritmy nespoléhají čistě na kvantový počítač, ale efektivně kombinují silné stránky klasických procesorů (CPU/GPU) a kvantových procesorů (QPU) \cite{schuld_book}.
+
+\subsection{Hybridní architektura}
+V hybridním modelu, který je předmětem této práce, je výpočetní proces rozdělen do dvou fází:
+\begin{enumerate}
+    \item \textbf{Klasická část (Feature Extraction):} Hluboká konvoluční síť (v našem případě ResNet-50) zpracovává vysokorozměrná vstupní data (rentgenové snímky s miliony pixelů). Jejím úkolem je redukovat dimenzi dat a extrahovat z nich kompaktní vektor příznaků (feature vector).
+    \item \textbf{Kvantová část (Classification):} Tento vektor příznaků slouží jako vstup do kvantového obvodu. QPU provede výpočet v Hilbertově prostoru a vrátí výsledek (pravděpodobnost tříd), který je následně využit pro výpočet chybové funkce.
+\end{enumerate}
+
+Klíčovým mechanismem je zpětné šíření chyby (backpropagation). Gradienty jsou vypočítávány na klasickém počítači, avšak pro optimalizaci parametrů v kvantovém obvodu se využívá specifických metod, jako je např. \textit{Parameter Shift Rule}, které umožňují analyticky určit gradient kvantového hradla \cite{mitarai_qcl}.
+
+\subsection{Kódování dat (Data Encoding)}
+Aby mohl kvantový obvod zpracovat data z klasické sítě, musí být klasický vektor $\mathbf{x} = (x_1, \dots, x_N)$ převeden do kvantového stavu $|\psi_\mathbf{x}\rangle$. Tento proces, nazývaný \textit{State Preparation} nebo \textit{Embedding}, je kritickou částí algoritmu, neboť ovlivňuje expresivitu celého modelu.
+
+Mezi nejčastěji používané metody patří:
+\begin{itemize}
+    \item \textbf{Angle Encoding (Úhlové kódování):} Každá hodnota $x_i$ ze vstupního vektoru je použita jako úhel rotace pro jedno kvantové hradlo (např. $R_x(x_i)$).
+    \begin{equation}
+        |\psi\rangle = \bigotimes_{i=1}^N R_x(x_i) |0\rangle
+    \end{equation}
+    Tato metoda je výpočetně efektivní (konstantní hloubka obvodu), ale vyžaduje $N$ qubitů pro $N$ příznaků, což může být u větších vektorů limitující.
+    
+    \item \textbf{Amplitude Encoding (Amplitudové kódování):} Data jsou zakódována do amplitud kvantového stavu. Vektor $\mathbf{x}$ je normalizován a jeho prvky odpovídají amplitudám pravděpodobnosti bázových stavů:
+    \begin{equation}
+        |\psi\rangle = \sum_{i=1}^{2^n} x_i |i\rangle
+    \end{equation}
+    Tato metoda je exponenciálně úsporná (pro $N$ příznaků stačí $\log_2 N$ qubitů), avšak příprava takového stavu vyžaduje hluboký kvantový obvod, který je náchylný na šum \cite{data_encoding_review}.
+\end{itemize}
+
+V této práci je výstup z ResNetu (např. vektor o délce 4 až 16 prvků po redukci) zakódován pomocí [DOPLŇTE: např. Angle Encoding], což umožňuje jeho zpracování na současných NISQ zařízeních.
+
+\subsection{Variační kvantové obvody (VQC)}
+Variační kvantový obvod (Variational Quantum Circuit, VQC) plní v hybridním modelu roli, kterou v klasických sítích zastávají plně propojené vrstvy. Jedná se o parametrický kvantový obvod $U(\boldsymbol{\theta})$, kde $\boldsymbol{\theta}$ představuje sadu nastavitelných parametrů (úhlů rotací).
+
+Matematicky lze operaci VQC popsat jako unitární transformaci vstupního stavu $|\psi_\mathbf{x}\rangle$, následovanou měřením:
+\begin{equation}
+    f(\mathbf{x}, \boldsymbol{\theta}) = \langle \psi_\mathbf{x} | U^\dagger(\boldsymbol{\theta}) M U(\boldsymbol{\theta}) | \psi_\mathbf{x} \rangle
+\end{equation}
+kde $M$ je operátor měření (pozorovatelná veličina, typicky Pauli-Z operátor).
+
+Na rozdíl od klasických neuronů, které používají fixní aktivační funkce, VQC využívá principů kvantové interference a provázání k vytvoření komplexních rozhodovacích hranic. Trénink sítě pak spočívá v hledání takových parametrů $\boldsymbol{\theta}$, které minimalizují chybovou funkci na trénovací množině, podobně jako se optimalizují váhy v klasické neuronové síti.
+
+
+
 \chapter{Cíle práce} \label{chap:cile}
 % [cite: 110-114]
 Definujte hlavní a dílčí cíle. Stanovte hypotézy nebo výzkumné otázky.
@@ -291,13 +338,7 @@ Stručné shrnutí, naplnění cílů, přínos práce. Rozsah cca 1 strana.
 
 % ================= LITERATURA [cite: 151-190] =================
 \printbibliography[title={Seznam použité literatury}]
-% @inproceedings{resnet_paper,
-%   title={Deep residual learning for image recognition},
-%   author={He, Kaiming and Zhang, Xiangyu and Ren, Shaoqing and Sun, Jian},
-%   booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
-%   pages={770--778},
-%   year={2016}
-% }
+
 % Poznámka: SOČ preferuje ISO 690.
 
 % ================= SEZNAM ZKRATEK [cite: 191-197] =================
@@ -310,6 +351,9 @@ Stručné shrnutí, naplnění cílů, přínos práce. Rozsah cca 1 strana.
     \item[CNN] Convolutional Neural Network
     \item[VQC] Variační kvantový klasifikátor
     \item[QML] Quantum Machine Learning
+    \item[CPU] Central Processing Unit
+    \item[GPU] Graphical Processing Unit
+    \item[QPU] Quantum Processing Unit
 \end{description}
 
 % ================= PŘÍLOHY [cite: 198-202] =================
