@@ -7,5 +7,25 @@ features
 *.png
 !results/*.npy
 
-docs/
+docs/*.log
+docs/*.aux
+docs/*.out
+docs/*.toc
+docs/*.gz
+docs/*.blg
+docs/*.bbl
+docs/*.synctex.gz
+docs/*.fdb_latexmk
+docs/*.fls
+docs/*.lof
+docs/*.lot
+docs/*.lol
+docs/*.run.xml
+docs/*.bcf
+docs/*.xml
+docs/*.nav
+docs/*.snm
+docs/*.pdf
+docs/*.bcf*
 !docs/soc.tex
+!docs/literatura.bib
