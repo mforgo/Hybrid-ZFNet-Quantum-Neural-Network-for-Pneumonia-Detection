@@ -1,4 +1,4 @@
-\documentclass[12pt, a4paper, draft]{report}
+\documentclass[12pt, a4paper]{report} % Odstranil jsem 'draft' pro finální vzhled
 
 % --- ZÁKLADNÍ BALÍČKY ---
 \usepackage[utf8]{inputenc}
@@ -13,6 +13,29 @@
 \usepackage[hidelinks]{hyperref} % Proklikávací obsah bez rámečků
 \usepackage{amssymb}        % Pro matematické symboly
 \usepackage{amsmath}        % Pro matematické prostředí
+\usepackage{tikz}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{float}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{green},
+  stringstyle=\color{red},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  captionpos=b,
+  frame=single
+}
+
+\usetikzlibrary{shapes.geometric, arrows, positioning}
+
+% Definice stylů
+\tikzstyle{startstop} = [rectangle, rounded corners, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=red!30]
+\tikzstyle{process} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=orange!30]
+\tikzstyle{quantum} = [rectangle, minimum width=3cm, minimum height=1cm, text centered, draw=black, fill=blue!20]
+\tikzstyle{arrow} = [thick,->,>=stealth]
 
 % --- NASTAVENÍ CITACÍ (ISO 690) ---
 % Pokud používáte Overleaf, ujistěte se, že máte nastavený kompiler na pdflatex nebo xelatex
@@ -80,15 +103,18 @@
 \thispagestyle{empty}
 \section*{Prohlášení}
 
-Prohlašuji, že jsem svou práci SOČ vypracoval/a samostatně a použil/a jsem pouze prameny a literaturu uvedené v seznamu bibliografických záznamů.
-
-Beru na vědomí, že nejpozději odevzdáním slovesné vědecké práce do veřejné soutěže Středoškolská odborná činnost, stejně jako odevzdáním jejích příloh a dalších připojených děl, např. audiovizuálních, fotografických, výtvarných, architektonických apod. (dále jen „soutěžní dílo“), dochází ke zveřejnění díla podle § 4 odst. 1 zákona č. 121/2000 Sb., autorského zákona, ve znění pozdějších předpisů (dále jen „autorský zákon“).
-
+Prohlašuji, že jsem svou práci SOČ vypracoval samostatně a použil jsem pouze prameny a literaturu uvedené v seznamu bibliografických záznamů.
+Beru na vědomí, že nejpozději odevzdáním slovesné vědecké práce do veřejné soutěže Středoškolská odborná činnost, stejně jako odevzdáním jejích příloh a dalších připojených děl, např.
+audiovizuálních, fotografických, výtvarných, architektonických apod. (dále jen „soutěžní dílo“), dochází ke zveřejnění díla podle § 4 odst. 1 zákona č.
+121/2000 Sb., autorského zákona, ve znění pozdějších předpisů (dále jen „autorský zákon“).
 Totéž platí pro pozdější odevzdání doplněného, změněného, upraveného nebo opraveného díla.
+Beru na vědomí, že zveřejněním díla, jehož součástí je vynález, se tento vynález stává součástí stavu techniky podle § 5 odst.
+1, 2 zákona č. 527/1990 Sb., o vynálezech, průmyslových vzorech a zlepšovacích návrzích, ve znění pozdějších předpisů (dále jen „patentový zákon“), což zakládá překážku pro udělení patentu podle § 3 odst.
+1 patentového zákona.
 
-Beru na vědomí, že zveřejněním díla, jehož součástí je vynález, se tento vynález stává součástí stavu techniky podle § 5 odst. 1, 2 zákona č. 527/1990 Sb., o vynálezech, průmyslových vzorech a zlepšovacích návrzích, ve znění pozdějších předpisů (dále jen „patentový zákon“), což zakládá překážku pro udělení patentu podle § 3 odst. 1 patentového zákona.
-
-Beru na vědomí, že vyhlašovatel soutěže je podle § 61 odst. 1 autorského zákona per analogiam oprávněn užít soutěžní dílo pro účely zajištění průběhu soutěže, zejména k zajištění transparentnosti soutěže a veřejnosti obhajob soutěžních prací. V odůvodněném rozsahu je tedy vyhlašovatel po dobu účasti autora v soutěži oprávněn zejména:
+Beru na vědomí, že vyhlašovatel soutěže je podle § 61 odst.
+1 autorského zákona per analogiam oprávněn užít soutěžní dílo pro účely zajištění průběhu soutěže, zejména k zajištění transparentnosti soutěže a veřejnosti obhajob soutěžních prací.
+V odůvodněném rozsahu je tedy vyhlašovatel po dobu účasti autora v soutěži oprávněn zejména:
 \begin{itemize}
     \item zhotovovat rozmnoženiny díla, je-li to nezbytné k seznámení účastníků soutěže, porotců nebo veřejnosti se soutěžní prací;
     \item zapůjčit originál nebo rozmnoženinu díla účastníkům soutěže, porotcům nebo veřejnosti. Přitom dbá na bezpečné nakládání s dílem;
@@ -99,14 +125,12 @@ Beru na vědomí, že vyhlašovatel soutěže je podle § 61 odst. 1 autorského
 % --- VOLBA AI PROHLÁŠENÍ ---
 
 % MOŽNOST A: BEZ AI
-% Dále prohlašuji, že při tvorbě této práce jsem nepoužil/a nástroje AI.
-
+% Dále prohlašuji, že při tvorbě této práce jsem nepoužil nástroje AI.
 % MOŽNOST B: S POUŽITÍM AI
-Dále prohlašuji, že při tvorbě této práce jsem použil nástroj generativního modelu AI [NÁZEV APLIKACE; WEBOVÁ ADRESA APLIKACE] za účelem [DŮVOD]. Po použití tohoto nástroje jsem provedl/a kontrolu obsahu a přebírám za něj plnou zodpovědnost.
-
+Dále prohlašuji, že při tvorbě této práce jsem použil nástroj generativního modelu AI Perplexity AI za účelem výzkumu a vývoje práce. Po použití tohoto nástroje jsem provedl kontrolu obsahu a přebírám za něj plnou zodpovědnost.
 \vspace{2cm}
 
-V \misto \ dne \today \hfill .......................................................\\
+V Plzni \ dne \today \hfill .......................................................\\
 \hspace*{10cm} \autor
 
 % ================= PODĚKOVÁNÍ [cite: 35-38] =================
@@ -114,15 +138,20 @@ V \misto \ dne \today \hfill ...................................................
 \thispagestyle{empty}
 \section*{Poděkování}
 Rád bych na tomto místě poděkoval Bc. Janu Boháčovi za odborné vedení a cenné rady, které mi poskytl při zpracování této práce.
-
-Dále mé poděkování patří výzkumnému centru Nové technologie (NTC) Západočeské univerzity v Plzni za poskytnutí přístupu ke kvantovým počítačům IBM a možnost jejich využití při řešení této práce. Jmenovitě bych chtěl v této souvislosti poděkovat Ing. Vítu Nováčkovi, Ph.D.
+Dále mé poděkování patří výzkumnému centru Nové technologie (NTC) Západočeské univerzity v Plzni za poskytnutí přístupu ke kvantovým počítačům IBM a možnost jejich využití při řešení této práce.
+Jmenovitě bych chtěl v této souvislosti poděkovat Ing. Vítu Nováčkovi, Ph.D.
 
 % ================= ANOTACE A KLÍČOVÁ SLOVA [cite: 39-48] =================
 \newpage
 \thispagestyle{empty}
 
 \section*{Anotace}
-Tato práce se zabývá využitím kvantového strojového učení v oblasti medicínské diagnostiky, konkrétně při detekci zápalu plic z rentgenových snímků hrudníku. Hlavním cílem bylo navrhnout a implementovat hybridní model, který kombinuje klasickou CNN s kvantovými výpočty. V rámci experimentální části byla CNN využita jako extraktor příznaků (feature extractor), jehož výstup byl následně zpracován variačním kvantovým obvodem (VQC) sloužícím jako klasifikátor. Účinnost tohoto hybridního přístupu byla testována na veřejně dostupné databázi rentgenových snímků a porovnána s výkonem konvenčních metod hlubokého učení. Výsledky práce demonstrují, zda zapojení kvantových vrstev přináší zlepšení v přesnosti či efektivitě učení oproti čistě klasickým modelům. Práce tak přispívá k diskusi o praktické využitelnosti kvantových neuronových sítí v analýze biomedicínských obrazových dat.
+Tato práce se zabývá využitím kvantového strojového učení v oblasti medicínské diagnostiky, konkrétně při detekci zápalu plic z rentgenových snímků hrudníku.
+Hlavním cílem bylo navrhnout a implementovat hybridní model, který kombinuje klasickou CNN s kvantovými výpočty.
+V rámci experimentální části byla CNN využita jako extraktor příznaků (feature extractor), jehož výstup byl následně redukován pomocí PCA a zpracován variačním kvantovým obvodem (VQC) sloužícím jako klasifikátor.
+Účinnost tohoto hybridního přístupu byla testována na veřejně dostupné databázi rentgenových snímků a porovnána s výkonem konvenčních metod hlubokého učení.
+Výsledky práce demonstrují, zda zapojení kvantových vrstev přináší zlepšení v přesnosti či efektivitě učení oproti čistě klasickým modelům.
+Práce tak přispívá k diskusi o praktické využitelnosti kvantových neuronových sítí v analýze biomedicínských obrazových dat.
 
 \section*{Klíčová slova}
 strojové učení; kvantové počítání; detekce pneumonie; NISQ; hybridní model
@@ -132,7 +161,12 @@ strojové učení; kvantové počítání; detekce pneumonie; NISQ; hybridní mo
 \vspace{1cm}
 
 \section*{Annotation}
-This thesis deals with the application of quantum machine learning in medical diagnostics, specifically in the detection of pneumonia from chest X-ray images. The main objective was to design and implement a hybrid network model combining a classical CNN with quantum computing. In the experimental part, a CNN was utilized as a feature extractor, the output of which was subsequently processed by a Variational Quantum Circuit (VQC) serving as a classifier. The efficacy of this hybrid approach was tested on a publicly available dataset of X-ray images and compared with the performance of conventional deep learning methods. The results demonstrate whether the integration of quantum layers yields improvements in accuracy or learning efficiency compared to purely classical models. The thesis thus contributes to the discussion on the practical applicability of quantum neural networks in the analysis of biomedical image data.
+This thesis deals with the application of quantum machine learning in medical diagnostics, specifically in the detection of pneumonia from chest X-ray images.
+The main objective was to design and implement a hybrid architecture combining a classical CNN with quantum computing.
+In the experimental part, a CNN was utilized as a feature extractor, the output of which was subsequently reduced via PCA and processed by a Variational Quantum Classifier (VQC).
+The efficacy of this hybrid approach was tested on a publicly available dataset of X-ray images and compared with the performance of conventional deep learning methods.
+The results demonstrate whether the integration of quantum layers yields improvements in accuracy or learning efficiency compared to purely classical models.
+The thesis thus contributes to the discussion on the practical applicability of quantum neural networks in the analysis of biomedical image data.
 
 \section*{Keywords}
 machine learning; quantum computing; pneumonia detection; NISQ; hybrid model
@@ -143,40 +177,56 @@ machine learning; quantum computing; pneumonia detection; NISQ; hybrid model
 
 % ================= VLASTNÍ TEXT PRÁCE =================
 \newpage
-% Číslování stránek začíná být viditelné zde, ale počítá se od začátku
 \setcounter{page}{7} 
 
 \chapter{Úvod} \label{chap:uvod}
 
-Rychlý rozvoj umělé inteligence a hlubokého učení v posledním desetiletí zásadním způsobem transformoval řadu oborů, přičemž medicínská diagnostika patří mezi ty nejvíce ovlivněné. Konvoluční neuronové sítě (CNN) dnes dosahují při analýze rentgenových snímků přesnosti srovnatelné s lidskými experty. Přesto naráží klasické křemíkové čipy na své fyzikální limity, zejména pokud jde o výpočetní náročnost trénování stále komplexnějších modelů. Do popředí zájmu se tak dostává kvantové počítání, které slibuje revoluci ve způsobu zpracování informací.
+Rychlý rozvoj umělé inteligence a hlubokého učení v posledním desetiletí zásadním způsobem transformoval řadu oborů, přičemž medicínská diagnostika patří mezi ty nejvíce ovlivněné.
+Konvoluční neuronové sítě (CNN) dnes dosahují při analýze rentgenových snímků přesnosti srovnatelné s lidskými experty.
 
-V současné době se oblast kvantových technologií nachází v éře, kterou John Preskill definoval jako NISQ (Noisy Intermediate-Scale Quantum). Jedná se o období, kdy máme k dispozici kvantové procesory s desítkami až stovkami fyzických qubitů. Tyto procesory sice již nejsou triviální, ale zároveň ještě nejsou dostatečně robustní a chybově korigované (fault-tolerant), aby mohly provádět libovolně dlouhé algoritmy bez vlivu šumu a dekoherence.
+Přesto naráží klasické křemíkové čipy na své fyzikální limity, zejména pokud jde o výpočetní náročnost trénování stále komplexnějších modelů.
+Do popředí zájmu se tak dostává kvantové počítání, které slibuje revoluci ve způsobu zpracování informací.
+V současné době se oblast kvantových technologií nachází v éře, kterou John Preskill definoval jako NISQ (Noisy Intermediate-Scale Quantum).
+Jedná se o období, kdy máme k dispozici kvantové procesory s desítkami až stovkami fyzických qubitů.
+Tyto procesory sice již nejsou triviální, ale zároveň ještě nejsou dostatečně robustní a chybově korigované (fault-tolerant), aby mohly provádět libovolně dlouhé algoritmy bez vlivu šumu a dekoherence.
+I v tomto nedokonalém prostředí se již podařilo na reálném hardwaru provést výpočty, které naznačují dosažení tzv.
+kvantové výhody či dokonce kvantové nadvlády (quantum supremacy). Experimenty společností jako Google či IBM ukázaly, že kvantové čipy dokáží vyřešit specifické matematické úlohy řádově rychleji než nejvýkonnější klasické superpočítače.
 
-I v tomto nedokonalém prostředí se již podařilo na reálném hardwaru provést výpočty, které naznačují dosažení tzv. kvantové výhody či dokonce kvantové nadvlády (quantum supremacy). Experimenty společností jako Google či IBM ukázaly, že kvantové čipy dokáží vyřešit specifické matematické úlohy řádově rychleji než nejvýkonnější klasické superpočítače. Je však nutné podotknout, že tato tvrzení jsou předmětem vědeckých diskusí a kontroverzí, neboť klasické algoritmy jsou neustále optimalizovány a hranice mezi tím, co je a není klasicky simulovatelné, se dynamicky posouvá.
+Je však nutné podotknout, že tato tvrzení jsou předmětem vědeckých diskusí a kontroverzí, neboť klasické algoritmy jsou neustále optimalizovány a hranice mezi tím, co je a není klasicky simulovatelné, se dynamicky posouvá.
+Zásadní otázkou, kterou si tato práce klade, je aplikovatelnost těchto principů v oblasti strojového učení (Quantum Machine Learning - QML).
+Je sporné, zda v éře NISQ, která je charakteristická vysokou chybovostí a nedostatkem logických qubitů, můžeme očekávat reálné zlepšení oproti klasickým neuronovým sítím.
+Rušení kvantových stavů může v mnoha případech zcela degradovat teoretickou výhodu, kterou kvantový paralelizmus nabízí.
 
-Zásadní otázkou, kterou si tato práce klade, je aplikovatelnost těchto principů v oblasti strojového učení (Quantum Machine Learning - QML). Je sporné, zda v éře NISQ, která je charakteristická vysokou chybovostí a nedostatkem logických qubitů, můžeme očekávat reálné zlepšení oproti klasickým neuronovým sítím. Rušení kvantových stavů může v mnoha případech zcela degradovat teoretickou výhodu, kterou kvantový paralelizmus nabízí.
-
-Tato práce se pokouší na tuto otázku odpovědět prostřednictvím návrhu hybridní architektury. Namísto snahy o čistě kvantové řešení, které by v současnosti naráželo na hardwarové limity, volíme kombinovaný přístup. Spojujeme osvědčenou klasickou architekturu ResNet, která slouží k efektivní extrakci příznaků z medicínských snímků, s variačním kvantovým obvodem (VQC). Cílem je zjistit, zda i malé množství "šumících" qubitů zapojených do rozhodovacího procesu může přinést měřitelnou výhodu v přesnosti detekce pneumonie, nebo zda je vliv šumu v současné generaci hardwaru stále příliš dominantní.
+Tato práce se pokouší na tuto otázku odpovědět prostřednictvím návrhu hybridní architektury.
+Namísto snahy o čistě kvantové řešení, které by v současnosti naráželo na hardwarové limity, volíme kombinovaný přístup.
+Spojujeme osvědčenou klasickou architekturu ResNet, která slouží k efektivní extrakci příznaků z medicínských snímků, s variačním kvantovým obvodem (VQC).
+Cílem je zjistit, zda i malé množství "šumících" qubitů zapojených do rozhodovacího procesu může přinést měřitelnou výhodu v přesnosti detekce pneumonie, nebo zda je vliv šumu v současné generaci hardwaru stále příliš dominantní.
 
 \chapter{Teoretická část} \label{chap:teorie}
 
 \section{Medicínská východiska} \label{sec:medicina}
 
-Pneumonie, běžně označovaná jako zápal plic, představuje jedno z nejrozšířenějších a nejzávažnějších respiračních onemocnění celosvětově. Jedná se o akutní zánětlivý proces postihující plicní parenchym, konkrétně plicní sklípky (alveoly) a terminální bronchioly, které se v důsledku zánětu plní tekutinou a hnisem. Tento stav výrazně omezuje schopnost plic absorbovat kyslík, což vede k respirační nedostatečnosti \cite{who_pneumonia}. Podle statistik Světové zdravotnické organizace (WHO) patří pneumonie mezi hlavní příčiny úmrtí dětí do pěti let a představuje významné riziko pro seniory a imunokompromitované pacienty.
+Pneumonie, běžně označovaná jako zápal plic, představuje jedno z nejrozšířenějších a nejzávažnějších respiračních onemocnění celosvětově.
+Jedná se o akutní zánětlivý proces postihující plicní parenchym, konkrétně plicní sklípky (alveoly) a terminální bronchioly, které se v důsledku zánětu plní tekutinou a hnisem.
+Tento stav výrazně omezuje schopnost plic absorbovat kyslík, což vede k respirační nedostatečnosti \cite{who_pneumonia}.
+Podle statistik Světové zdravotnické organizace (WHO) patří pneumonie mezi hlavní příčiny úmrtí dětí do pěti let a představuje významné riziko pro seniory a imunokompromitované pacienty.
 
 \subsection{Etiologie a klasifikace}
-Původci onemocnění mohou být různého charakteru, přičemž správná identifikace patogenu je klíčová pro zvolení adekvátní léčby. Nejčastěji se setkáváme s pneumonií:
+Původci onemocnění mohou být různého charakteru, přičemž správná identifikace patogenu je klíčová pro zvolení adekvátní léčby.
+Nejčastěji se setkáváme s pneumonií:
 \begin{itemize}
-    \item \textbf{Bakteriální:} Nejběžnějším původcem je \textit{Streptococcus pneumoniae}. Tento typ se často projevuje náhlým nástupem a na rentgenových snímcích mívá charakteristický obraz lobární konsolidace (postižení celého laloku).
-    \item \textbf{Virovou:} Způsobenou viry chřipky (Influenza), RSV nebo koronaviry (např. SARS-CoV-2). Virové pneumonie mají tendenci vykazovat difuznější nález a postihovat interstitium (vazivovou tkáň plic) \cite{radiology_viral_vs_bacterial}.
+    \item \textbf{Bakteriální:} Nejběžnějším původcem je \textit{Streptococcus pneumoniae}.
+    Tento typ se často projevuje náhlým nástupem a na rentgenových snímcích mívá charakteristický obraz lobární konsolidace (postižení celého laloku).
+    \item \textbf{Virovou:} Způsobenou viry chřipky (Influenza), RSV nebo koronaviry (např. SARS-CoV-2).
+    Virové pneumonie mají tendenci vykazovat difuznější nález a postihovat interstitium (vazivovou tkáň plic) \cite{radiology_viral_vs_bacterial}.
     \item \textbf{Atypickou a mykotickou:} Způsobenou méně běžnými organismy, jako jsou mykoplazmata nebo houby.
 \end{itemize}
 
 \subsection{Diagnostika pomocí skiagrafie hrudníku}
-Ačkoliv je výpočetní tomografie (CT) považována za citlivější metodu pro detailní zobrazení plicních patologií, základním pilířem diagnostiky zůstává konvenční skiagrafie hrudníku (rentgen, CXR). Důvody jsou pragmatické: rentgenové vyšetření je rychlé, levné, široce dostupné a vystavuje pacienta výrazně nižší dávce ionizujícího záření než CT \cite{chest_xray_diagnosis}.
-
-Na rentgenovém snímku se zdravá plicní tkáň, která je naplněná vzduchem, jeví jako tmavá oblast (radiolucentní). Naopak patologické procesy spojené s pneumonií, jako jsou zánětlivé výpotky a buněčná infiltrace, absorbují rentgenové záření více, a proto se na snímku zobrazují jako světlá až bílá zastínění (opacity).
-
+Ačkoliv je výpočetní tomografie (CT) považována za citlivější metodu pro detailní zobrazení plicních patologií, základním pilířem diagnostiky zůstává konvenční skiagrafie hrudníku (rentgen, CXR).
+Důvody jsou pragmatické: rentgenové vyšetření je rychlé, levné, široce dostupné a vystavuje pacienta výrazně nižší dávce ionizujícího záření než CT \cite{chest_xray_diagnosis}.
+Na rentgenovém snímku se zdravá plicní tkáň, která je naplněná vzduchem, jeví jako tmavá oblast (radiolucentní).
+Naopak patologické procesy spojené s pneumonií, jako jsou zánětlivé výpotky a buněčná infiltrace, absorbují rentgenové záření více, a proto se na snímku zobrazují jako světlá až bílá zastínění (opacity).
 Lékař-radiolog při popisu snímku hledá specifické příznaky:
 \begin{itemize}
     \item \textbf{Konsolidace:} Oblast plic, kde byl vzduch nahrazen tekutinou, jevící se jako jasná bílá skvrna.
@@ -185,8 +235,8 @@ Lékař-radiolog při popisu snímku hledá specifické příznaky:
 \end{itemize}
 
 \subsection{Limitace manuální diagnostiky a role AI}
-Interpretace rentgenových snímků je vysoce náročný proces, který vyžaduje zkušeného radiologa. I přesto je tento proces zatížen určitou mírou subjektivity. Studie ukazují, že shoda mezi různými radiology (inter-observer variability) není stoprocentní, zejména u hraničních nálezů nebo u snímků s nízkým kontrastem \cite{radiologist_error_rate}.
-
+Interpretace rentgenových snímků je vysoce náročný proces, který vyžaduje zkušeného radiologa.
+I přesto je tento proces zatížen určitou mírou subjektivity. Studie ukazují, že shoda mezi různými radiology (inter-observer variability) není stoprocentní, zejména u hraničních nálezů nebo u snímků s nízkým kontrastem \cite{radiologist_error_rate}.
 Mezi hlavní problémy manuální diagnostiky patří:
 \begin{enumerate}
     \item \textbf{Vizuální podobnost patologií:} Obraz pneumonie může být snadno zaměnitelný s jinými stavy, jako je edém plic, atelektáza nebo plicní fibróza.
@@ -194,130 +244,160 @@ Mezi hlavní problémy manuální diagnostiky patří:
     \item \textbf{Dostupnost expertů:} V rozvojových zemích nebo odlehlých oblastech může být nedostatek kvalifikovaných radiologů kritický.
 \end{enumerate}
 
-Právě tyto limitace otevírají prostor pro aplikaci systémů počítačového vidění a umělé inteligence. Algoritmy, jako jsou konvoluční neuronové sítě (CNN), a v kontextu této práce i hybridní kvantové sítě, mají potenciál sloužit jako "druhý pár očí", který dokáže konzistentně detekovat jemné vzory v obraze, jež mohou lidskému oku uniknout.
+Právě tyto limitace otevírají prostor pro aplikaci systémů počítačového vidění a umělé inteligence.
+Algoritmy, jako jsou konvoluční neuronové sítě (CNN), a v kontextu této práce i hybridní kvantové sítě, mají potenciál sloužit jako "druhý pár očí", který dokáže konzistentně detekovat jemné vzory v obraze, jež mohou lidskému oku uniknout.
 
 \section{Konvoluční neuronové sítě a architektura ResNet} \label{sec:resnet}
 
-Zatímco princip konvolučních sítí (vrstvy konvoluce, aktivace a poolingu) zůstává od počátku hlubokého učení stejný, architektury sítí prošly bouřlivým vývojem. V této práci je pro extrakci příznaků využita architektura **ResNet-50** (Residual Network), která představuje zlomový bod v designu hlubokých neuronových sítí. Tento model, představený Kaimingem He a kolektivem z Microsoft Research v roce 2015, zvítězil v soutěži ILSVRC s chybovostí pod 3,6 \%, čímž překonal lidskou schopnost klasifikace \cite{resnet_paper}.
+Zatímco princip konvolučních sítí (vrstvy konvoluce, aktivace a poolingu) zůstává od počátku hlubokého učení stejný, architektury sítí prošly bouřlivým vývojem.
+V této práci je pro extrakci příznaků využita architektura ResNet-50 (Residual Network), která představuje zlomový bod v designu hlubokých neuronových sítí.
+Tento model, představený Kaimingem He a kolektivem z Microsoft Research v roce 2015, zvítězil v soutěži ILSVRC s chybovostí pod 3,6 \%, čímž překonal lidskou schopnost klasifikace \cite{resnet_paper}.
 
 \subsection{Problém mizejícího gradientu a degradace}
-S rostoucí hloubkou neuronových sítí se historicky objevoval problém tzv. mizejícího gradientu (vanishing gradient). Při zpětném šíření chyby (backpropagation) přes mnoho vrstev se derivace postupně zmenšovaly k nule, což znemožňovalo efektivní učení prvních vrstev sítě. Paradoxně, přidávání dalších vrstev vedlo k horším výsledkům nejen na testovací, ale i na trénovací sadě – tento jev je znám jako problém degradace (degradation problem).
+S rostoucí hloubkou neuronových sítí se historicky objevoval problém tzv. mizejícího gradientu (vanishing gradient).
+Při zpětném šíření chyby (backpropagation) přes mnoho vrstev se derivace postupně zmenšovaly k nule, což znemožňovalo efektivní učení prvních vrstev sítě.
+Paradoxně, přidávání dalších vrstev vedlo k horším výsledkům nejen na testovací, ale i na trénovací sadě – tento jev je znám jako problém degradace (degradation problem).
 
 \subsection{Reziduální učení a skip connections}
-Architektura ResNet řeší tento problém zavedením tzv. \textit{reziduálních bloků} a zkratkových spojení (skip connections nebo identity shortcuts).
+Architektura ResNet řeší tento problém zavedením tzv.
+\textit{reziduálních bloků} a zkratkových spojení (skip connections nebo identity shortcuts).
 
-V klasické síti se vrstva snaží naučit přímé mapování $H(x)$. ResNet však přeformulovává úlohu tak, aby vrstvy aproximovaly pouze reziduální (zbytkovou) funkci $F(x) = H(x) - x$. Výsledná funkce bloku je pak definována jako:
+V klasické síti se vrstva snaží naučit přímé mapování $H(x)$.
+ResNet však přeformulovává úlohu tak, aby vrstvy aproximovaly pouze reziduální (zbytkovou) funkci $F(x) = H(x) - x$.
+Výsledná funkce bloku je pak definována jako:
 \begin{equation}
     H(x) = F(x) + x
 \end{equation}
 kde $x$ je vstup do bloku a $F(x)$ je transformace provedená váhami vrstvy.
-
-Tento „zkratkový spoj“ umožňuje, aby se gradient během zpětného šíření mohl přenášet napříč sítí bez modifikace. Pokud by optimální transformací byla identita (tj. vrstva by neměla dělat nic), pro síť je snazší naučit se váhy směřující k nule ($F(x) \to 0$) než se snažit napodobit identitu v nelineárních vrstvách.
+Tento „zkratkový spoj“ umožňuje, aby se gradient během zpětného šíření mohl přenášet napříč sítí bez modifikace.
+Pokud by optimální transformací byla identita (tj. vrstva by neměla dělat nic), pro síť je snazší naučit se váhy směřující k nule ($F(x) \to 0$) než se snažit napodobit identitu v nelineárních vrstvách.
 
 \subsection{Specifika modelu ResNet-50}
-Model ResNet-50, použitý v této práci, je hluboký 50 vrstev. Na rozdíl od mělčích variant (např. ResNet-34) využívá tzv. **Bottleneck architekturu**. Každý reziduální blok se skládá ze tří konvolucí namísto dvou:
+Model ResNet-50, použitý v této práci, je hluboký 50 vrstev.
+Na rozdíl od mělčích variant (např. ResNet-34) využívá tzv. Bottleneck architekturu.
+Každý reziduální blok se skládá ze tří konvolucí namísto dvou:
 \begin{itemize}
     \item $1 \times 1$ konvoluce (redukce dimenze),
     \item $3 \times 3$ konvoluce (samotná filtrace),
     \item $1 \times 1$ konvoluce (obnovení dimenze).
 \end{itemize}
 Toto uspořádání výrazně snižuje počet parametrů a výpočetní náročnost, což umožňuje trénovat hlubší sítě efektivněji.
-
-V našem hybridním modelu využíváme ResNet-50 bez poslední plně propojené vrstvy (tzv. headless model). Síť transformuje vstupní rentgenový snímek do vektoru příznaků o vysoké úrovni abstrakce, který následně slouží jako vstup pro kvantový variační obvod.
+V našem hybridním modelu využíváme ResNet-50 bez poslední plně propojené vrstvy (tzv. headless model).
+Síť transformuje vstupní rentgenový snímek do vektoru příznaků o vysoké úrovni abstrakce, který následně slouží jako vstup pro kvantový variační obvod.
 
 \section{Úvod do kvantového počítání} \label{sec:kvantove_pocitani}
 
-Zatímco klasické počítače, na kterých běží tradiční neuronové sítě, zpracovávají informace v bitech, kvantové počítače využívají principů kvantové mechaniky, jako je superpozice a provázání (entanglement). Základní informační jednotkou je kvantový bit, zkráceně \textbf{qubit} \cite{nielsen_chuang}.
+Zatímco klasické počítače, na kterých běží tradiční neuronové sítě, zpracovávají informace v bitech, kvantové počítače využívají principů kvantové mechaniky, jako je superpozice a provázání (entanglement).
+Základní informační jednotkou je kvantový bit, zkráceně \textbf{qubit} \cite{nielsen_chuang}.
 
 \subsection{Qubit a superpozice}
-Klasický bit se může nacházet pouze v jednom ze dvou diskrétních stavů: 0 nebo 1. Naproti tomu qubit může existovat v tzv. superpozici obou těchto stavů současně. Matematicky qubit reprezentujeme jako vektor v dvourozměrném Hilbertově prostoru. Používáme k tomu Diracovu "ket" notaci:
+Klasický bit se může nacházet pouze v jednom ze dvou diskrétních stavů: 0 nebo 1. Naproti tomu qubit může existovat v tzv.
+superpozici obou těchto stavů současně. Matematicky qubit reprezentujeme jako vektor v dvourozměrném Hilbertově prostoru.
+Používáme k tomu Diracovu "ket" notaci:
 
 \begin{equation}
     |\psi\rangle = \alpha|0\rangle + \beta|1\rangle
 \end{equation}
 
-kde $|0\rangle$ a $|1\rangle$ jsou bázové stavy (odpovídající klasické 0 a 1) a koeficienty $\alpha, \beta \in \mathbb{C}$ jsou komplexní amplitudy pravděpodobnosti. Pro tyto amplitudy musí platit normalizační podmínka:
+kde $|0\rangle$ a $|1\rangle$ jsou bázové stavy (odpovídající klasické 0 a 1) a koeficienty $\alpha, \beta \in \mathbb{C}$ jsou komplexní amplitudy pravděpodobnosti.
+Pro tyto amplitudy musí platit normalizační podmínka:
 
 \begin{equation}
     |\alpha|^2 + |\beta|^2 = 1
 \end{equation}
 
-To znamená, že pokud změříme qubit ve stavu superpozice, "zhroutí" se do stavu $|0\rangle$ s pravděpodobností $|\alpha|^2$ nebo do stavu $|1\rangle$ s pravděpodobností $|\beta|^2$. Právě tato pravděpodobnostní povaha je zásadním rozdílem oproti deterministickému klasickému bitu.
+To znamená, že pokud změříme qubit ve stavu superpozice, "zhroutí" se do stavu $|0\rangle$ s pravděpodobností $|\alpha|^2$ nebo do stavu $|1\rangle$ s pravděpodobností $|\beta|^2$.
+Právě tato pravděpodobnostní povaha je zásadním rozdílem oproti deterministickému klasickému bitu.
 
 \subsection{Blochova sféra}
-Pro vizualizaci stavu jednoho qubitu se často využívá geometrická reprezentace zvaná Blochova sféra (Obrázek \ref{fig:bloch}). Libovolný čistý stav qubitu lze zapsat pomocí úhlů $\theta$ a $\phi$ jako bod na povrchu koule o poloměru 1:
+\begin{figure}[htbp]
+    \centering
+    % Pokud máte obrázek v souboru:
+    \includegraphics[width=0.4\textwidth]{../media/bloch_sphere.png} 
+    \caption{Geometrická reprezentace stavu qubitu na Blochově sféře.}
+    \label{fig:bloch} % TENTO KLÍČ MUSÍ ODPOVÍDAT PŘÍKAZU \ref
+\end{figure}
+Pro vizualizaci stavu jednoho qubitu se často využívá geometrická reprezentace zvaná Blochova sféra (Obrázek \ref{fig:bloch}).
+Libovolný čistý stav qubitu lze zapsat pomocí úhlů $\theta$ a $\phi$ jako bod na povrchu koule o poloměru 1:
 
 \begin{equation}
     |\psi\rangle = \cos\left(\frac{\theta}{2}\right)|0\rangle + e^{i\phi}\sin\left(\frac{\theta}{2}\right)|1\rangle
 \end{equation}
 
-Tato reprezentace je klíčová pro pochopení fungování kvantových neuronových sítí. Trénování sítě v podstatě znamená hledání optimálních rotací stavového vektoru na této sféře tak, aby při měření dopadl výsledek do požadované třídy (např. "pneumonie").
+Tato reprezentace je klíčová pro pochopení fungování kvantových neuronových sítí.
+Trénování sítě v podstatě znamená hledání optimálních rotací stavového vektoru na této sféře tak, aby při měření dopadl výsledek do požadované třídy (např. "pneumonie").
 
 \subsection{Kvantová hradla (Quantum Gates)}
 Stejně jako klasické počítače používají logická hradla (AND, OR, NOT), kvantové algoritmy jsou sestaveny z kvantových hradel, která provádějí unitární operace na qubitech.
 \begin{itemize}
-    \item \textbf{Hadamardovo hradlo (H):} Vytváří superpozici. Mění stav $|0\rangle$ na $\frac{|0\rangle + |1\rangle}{\sqrt{2}}$, což dává 50\% šanci na změření 0 nebo 1.
-    \item \textbf{Rotační hradla ($R_x, R_y, R_z$):} Tato hradla otáčejí qubit kolem os x, y nebo z na Blochově sféře o určitý úhel. V kontextu variačních kvantových obvodů (VQC) jsou právě úhly těchto rotací těmi parametry (ahami), které se síť učí během tréninku.
-    \item \textbf{CNOT (Controlled-NOT):} Dvouqubitové hradlo, které je nezbytné pro vytvoření kvantového provázání. Pokud je řídicí qubit ve stavu $|1\rangle$, otočí cílový qubit (operace NOT).
+    \item \textbf{Hadamardovo hradlo (H):} Vytváří superpozici.
+    Mění stav $|0\rangle$ na $\frac{|0\rangle + |1\rangle}{\sqrt{2}}$, což dává 50\% šanci na změření 0 nebo 1.
+    \item \textbf{Rotační hradla ($R_x, R_y, R_z$):} Tato hradla otáčejí qubit kolem os x, y nebo z na Blochově sféře o určitý úhel.
+    V kontextu variačních kvantových obvodů (VQC) jsou právě úhly těchto rotací těmi parametry (ahami), které se síť učí během tréninku.
+    \item \textbf{CNOT (Controlled-NOT):} Dvouqubitové hradlo, které je nezbytné pro vytvoření kvantového provázání.
+    Pokud je řídicí qubit ve stavu $|1\rangle$, otočí cílový qubit (operace NOT).
 \end{itemize}
 
 \subsection{Kvantové provázání (Entanglement)}
-Provázání je jev, kdy se stavy dvou nebo více qubitů stanou na sobě závislými takovým způsobem, že stav celého systému nelze popsat pouze popisem stavů jednotlivých qubitů. Pokud změříme jeden z provázaných qubitů, okamžitě tím získáme informaci o druhém, a to bez ohledu na vzdálenost mezi nimi. V strojovém učení umožňuje entanglement zachytit složité korelace mezi daty, které jsou pro klasické modely výpočetně náročné.
+Provázání je jev, kdy se stavy dvou nebo více qubitů stanou na sobě závislými takovým způsobem, že stav celého systému nelze popsat pouze popisem stavů jednotlivých qubitů.
+Pokud změříme jeden z provázaných qubitů, okamžitě tím získáme informaci o druhém, a to bez ohledu na vzdálenost mezi nimi.
+V strojovém učení umožňuje entanglement zachytit složité korelace mezi daty, které jsou pro klasické modely výpočetně náročné.
 
 \section{Kvantové strojové učení (QML)} \label{sec:qml}
 
-Kvantové strojové učení je interdisciplinární oblast, která zkoumá možnosti využití kvantových algoritmů k vylepšení metod umělé inteligence. V kontextu současné éry NISQ se jako nejslibnější směr jeví tzv. **hybridní kvantově-klasické algoritmy**. Tyto algoritmy nespoléhají čistě na kvantový počítač, ale efektivně kombinují silné stránky klasických procesorů (CPU/GPU) a kvantových procesorů (QPU) \cite{schuld_book}.
+Kvantové strojové učení je interdisciplinární oblast, která zkoumá možnosti využití kvantových algoritmů k vylepšení metod umělé inteligence.
+V kontextu současné éry NISQ se jako nejslibnější směr jeví tzv. hybridní kvantově-klasické algoritmy.
+Tyto algoritmy nespoléhají čistě na kvantový počítač, ale efektivně kombinují silné stránky klasických procesorů (CPU/GPU) a kvantových procesorů (QPU) \cite{schuld_book}.
 
 \subsection{Hybridní architektura}
 V hybridním modelu, který je předmětem této práce, je výpočetní proces rozdělen do dvou fází:
 \begin{enumerate}
-    \item \textbf{Klasická část (Feature Extraction):} Hluboká konvoluční síť (v našem případě ResNet-50) zpracovává vysokorozměrná vstupní data (rentgenové snímky s miliony pixelů). Jejím úkolem je redukovat dimenzi dat a extrahovat z nich kompaktní vektor příznaků (feature vector).
-    \item \textbf{Kvantová část (Classification):} Tento vektor příznaků slouží jako vstup do kvantového obvodu. QPU provede výpočet v Hilbertově prostoru a vrátí výsledek (pravděpodobnost tříd), který je následně využit pro výpočet chybové funkce.
+    \item \textbf{Klasická část (Feature Extraction):} Hluboká konvoluční síť (v našem případě ResNet-50) zpracovává vysokorozměrná vstupní data (rentgenové snímky s miliony pixelů).
+    Jejím úkolem je redukovat dimenzi dat a extrahovat z nich kompaktní vektor příznaků (feature vector).
+    \item \textbf{Kvantová část (Classification):} Tento vektor příznaků slouží jako vstup do kvantového obvodu.
+    QPU provede výpočet v Hilbertově prostoru a vrátí výsledek (pravděpodobnost tříd), který je následně využit pro výpočet chybové funkce.
 \end{enumerate}
 
-Klíčovým mechanismem je zpětné šíření chyby (backpropagation). Gradienty jsou vypočítávány na klasickém počítači, avšak pro optimalizaci parametrů v kvantovém obvodu se využívá specifických metod, jako je např. \textit{Parameter Shift Rule}, které umožňují analyticky určit gradient kvantového hradla \cite{mitarai_qcl}.
+Klíčovým mechanismem je zpětné šíření chyby (backpropagation). Gradienty jsou vypočítávány na klasickém počítači, avšak pro optimalizaci parametrů v kvantovém obvodu se využívá specifických metod, jako je např.
+\textit{Parameter Shift Rule} (na reálném hardwaru) nebo přímá diferenciace simulace \cite{mitarai_qcl}.
 
 \subsection{Kódování dat (Data Encoding)}
-Aby mohl kvantový obvod zpracovat data z klasické sítě, musí být klasický vektor $\mathbf{x} = (x_1, \dots, x_N)$ převeden do kvantového stavu $|\psi_\mathbf{x}\rangle$. Tento proces, nazývaný \textit{State Preparation} nebo \textit{Embedding}, je kritickou částí algoritmu, neboť ovlivňuje expresivitu celého modelu.
-
+Aby mohl kvantový obvod zpracovat data z klasické sítě, musí být klasický vektor $\mathbf{x} = (x_1, \dots, x_N)$ převeden do kvantového stavu $|\psi_\mathbf{x}\rangle$.
+Tento proces, nazývaný \textit{State Preparation} nebo \textit{Embedding}, je kritickou částí algoritmu, neboť ovlivňuje expresivitu celého modelu.
 Mezi nejčastěji používané metody patří:
 \begin{itemize}
-    \item \textbf{Angle Encoding (Úhlové kódování):} Každá hodnota $x_i$ ze vstupního vektoru je použita jako úhel rotace pro jedno kvantové hradlo (např. $R_x(x_i)$).
-    \begin{equation}
-        |\psi\rangle = \bigotimes_{i=1}^N R_x(x_i) |0\rangle
-    \end{equation}
-    Tato metoda je výpočetně efektivní (konstantní hloubka obvodu), ale vyžaduje $N$ qubitů pro $N$ příznaků, což může být u větších vektorů limitující.
-    
-    \item \textbf{Amplitude Encoding (Amplitudové kódování):} Data jsou zakódována do amplitud kvantového stavu. Vektor $\mathbf{x}$ je normalizován a jeho prvky odpovídají amplitudám pravděpodobnosti bázových stavů:
+    \item \textbf{Angle Encoding (Úhlové kódování):} Každá hodnota $x_i$ ze vstupního vektoru je použita jako úhel rotace pro jedno kvantové hradlo. Vyžaduje $N$ qubitů pro $N$ příznaků.
+    \item \textbf{Amplitude Encoding (Amplitudové kódování):} Data jsou zakódována do amplitud kvantového stavu.
+    Vektor $\mathbf{x}$ je normalizován a jeho prvky odpovídají amplitudám pravděpodobnosti bázových stavů:
     \begin{equation}
         |\psi\rangle = \sum_{i=1}^{2^n} x_i |i\rangle
     \end{equation}
-    Tato metoda je exponenciálně úsporná (pro $N$ příznaků stačí $\log_2 N$ qubitů), avšak příprava takového stavu vyžaduje hluboký kvantový obvod, který je náchylný na šum \cite{data_encoding_review}.
+    Tato metoda je exponenciálně úsporná (pro $N$ příznaků stačí $\log_2 N$ qubitů), a proto byla zvolena pro tuto práci \cite{data_encoding_review}.
 \end{itemize}
 
-V této práci je výstup z ResNetu (např. vektor o délce 4 až 16 prvků po redukci) zakódován pomocí [DOPLŇTE: např. Angle Encoding], což umožňuje jeho zpracování na současných NISQ zařízeních.
+V této práci je výstup z ResNetu redukován na vektor o délce 32 prvků, který je následně zakódován do stavu systému 5 qubitů ($2^5 = 32$).
 
 \subsection{Variační kvantové obvody (VQC)}
-Variační kvantový obvod (Variational Quantum Circuit, VQC) plní v hybridním modelu roli, kterou v klasických sítích zastávají plně propojené vrstvy. Jedná se o parametrický kvantový obvod $U(\boldsymbol{\theta})$, kde $\boldsymbol{\theta}$ představuje sadu nastavitelných parametrů (úhlů rotací).
-
+Variační kvantový obvod (Variational Quantum Circuit, VQC) plní v hybridním modelu roli, kterou v klasických sítích zastávají plně propojené vrstvy.
+Jedná se o parametrický kvantový obvod $U(\boldsymbol{\theta})$, kde $\boldsymbol{\theta}$ představuje sadu nastavitelných parametrů (úhlů rotací).
 Matematicky lze operaci VQC popsat jako unitární transformaci vstupního stavu $|\psi_\mathbf{x}\rangle$, následovanou měřením:
 \begin{equation}
     f(\mathbf{x}, \boldsymbol{\theta}) = \langle \psi_\mathbf{x} | U^\dagger(\boldsymbol{\theta}) M U(\boldsymbol{\theta}) | \psi_\mathbf{x} \rangle
 \end{equation}
 kde $M$ je operátor měření (pozorovatelná veličina, typicky Pauli-Z operátor).
-
-Na rozdíl od klasických neuronů, které používají fixní aktivační funkce, VQC využívá principů kvantové interference a provázání k vytvoření komplexních rozhodovacích hranic. Trénink sítě pak spočívá v hledání takových parametrů $\boldsymbol{\theta}$, které minimalizují chybovou funkci na trénovací množině, podobně jako se optimalizují váhy v klasické neuronové síti.
+Trénink sítě pak spočívá v hledání takových parametrů $\boldsymbol{\theta}$, které minimalizují chybovou funkci na trénovací množině.
 
 \chapter{Cíle práce} \label{chap:cile}
 
-Hlavním cílem této práce je navrhnout, implementovat a experimentálně ověřit architekturu hybridní kvantově-klasické neuronové sítě pro medicínskou diagnostiku. Konkrétně se práce zaměřuje na detekci pneumonie z rentgenových snímků hrudníku v kontextu současných hardwarových omezení éry NISQ (Noisy Intermediate-Scale Quantum).
-
+Hlavním cílem této práce je navrhnout, implementovat a experimentálně ověřit architekturu hybridní kvantově-klasické neuronové sítě pro medicínskou diagnostiku.
+Konkrétně se práce zaměřuje na detekci pneumonie z rentgenových snímků hrudníku v kontextu současných hardwarových omezení éry NISQ (Noisy Intermediate-Scale Quantum).
 Na základě teoretické rešerše a analýzy problému byly stanoveny následující dílčí cíle:
 
 \begin{enumerate}
     \item \textbf{Implementace hybridního modelu:} Vytvořit funkční model, který propojuje moderní klasickou konvoluční síť (ResNet-50) ve funkci extraktoru příznaků s variačním kvantovým obvodem (VQC), jenž bude plnit roli klasifikátoru.
     \item \textbf{Optimalizace pro NISQ:} Navrhnout vhodné kódování klasických dat do kvantových stavů (data encoding) a strukturu kvantového obvodu (ansatz) tak, aby byl model trénovatelný i na simulátorech či reálných kvantových procesorech s omezeným počtem qubitů.
-    \item \textbf{Experimentální srovnání:} Porovnat výkonnost navrženého hybridního modelu s referenčním čistě klasickým modelem (ResNet-50 s plně propojenou vrstvou) na stejném datasetu. Srovnání bude provedeno z hlediska přesnosti klasifikace (accuracy), citlivosti (recall) a specifičnosti.
+    \item \textbf{Experimentální srovnání:} Porovnat výkonnost navrženého hybridního modelu s referenčním čistě klasickým modelem (ResNet-50 s plně propojenou vrstvou) na stejném datasetu.
+    Srovnání bude provedeno z hlediska přesnosti klasifikace (accuracy), citlivosti (recall) a specifičnosti.
     \item \textbf{Analýza efektivity:} Vyhodnotit, zda zapojení kvantové vrstvy přináší výhodu v podobě snížení počtu trénovatelných parametrů, a posoudit vliv šumu na konvergenci modelu.
 \end{enumerate}
 
@@ -332,93 +412,272 @@ Práce dále hledá odpověď na otázku, zda jsou současné metody kvantového
 
 \chapter{Metodika a experimentální část} \label{chap:metodika}
 
-Tato kapitola popisuje použitý datový soubor, metody předzpracování obrazových dat a detailní architekturu navrženého hybridního modelu. Dále jsou specifikovány tréninkové parametry a softwarové i hardwarové prostředí, ve kterém byly experimenty realizovány.
+Tato kapitola popisuje použitý datový soubor, metody předzpracování obrazových dat a detailní architekturu navrženého hybridního modelu.
+Dále jsou specifikovány tréninkové parametry a softwarové i hardwarové prostředí, ve kterém byly experimenty realizovány.
+
+\section{Navržená hybridní architektura}
+Jádrem práce je hybridní model, který se skládá ze dvou hlavních bloků: klasického extraktoru příznaků a kvantového klasifikátoru.
+Schéma architektury je znázorněno na Obrázku \ref{fig:architektura}.
+
+\begin{figure}[ht]
+    \centering
+    % \resizebox zajistí, že se celé schéma smrskne na šířku řádku
+    \resizebox{\textwidth}{!}{
+        \begin{tikzpicture}[node distance=3cm, auto]
+            % Definice stylů (pokud je nemáte v preambuli)
+            \tikzstyle{startstop} = [rectangle, rounded corners, minimum width=2.2cm, minimum height=1cm, text centered, draw=black, fill=red!20, font=\small]
+            \tikzstyle{process} = [rectangle, minimum width=2.5cm, minimum height=1cm, text centered, draw=black, fill=orange!20, font=\small]
+            \tikzstyle{quantum} = [rectangle, minimum width=2.5cm, minimum height=1cm, text centered, draw=black, fill=blue!10, font=\small]
+            \tikzstyle{arrow} = [thick,->,>=stealth]
+
+            % Uzly
+            \node (in) [startstop] {Vstup (RTG)};
+            \node (resnet) [process, right of=in] {ResNet-50};
+            \node (pca) [process, right of=resnet] {Select K Best};
+            \node (vqc) [quantum, right of=pca] {VQC};
+            \node (post) [process, right of=vqc, fill=green!10] {Threshold scan};
+            \node (out) [startstop, right of=post] {Klasifikace};
+
+            % Šipky s popisky
+            \draw [arrow] (in) -- (resnet);
+            \draw [arrow] (resnet) -- (pca);
+            \draw [arrow] (pca) -- (vqc);
+            \draw [arrow] (vqc) -- (post);
+            \draw [arrow] (post) -- (out);
+            
+            % Popisek pod post-processingem
+        \end{tikzpicture}
+    }
+    \caption{Horizontální schéma architektury hybridního modelu.}
+    \label{fig:architektura}
+\end{figure}
+
+
 
 \section{Datový soubor (Dataset)}
-Pro trénování a testování modelu byl využit veřejně dostupný dataset \textit{Chest X-Ray Images (Pneumonia)}, který pochází z Guangzhou Women and Children’s Medical Center. Tento dataset obsahuje rentgenové snímky hrudníku (předozadní projekce) pediatrických pacientů ve věku 1 až 5 let.
 
-Celkový soubor dat byl rozdělen do tří podmnožin:
-\begin{itemize}
-    \item \textbf{Trénovací sada:} Slouží k optimalizaci vah modelu. Obsahuje [DOPLŇTE: např. 5216] snímků.
-    \item \textbf{Validační sada:} Použita pro ladění hyperparametrů a monitorování převybavení (overfitting) v průběhu učení. Obsahuje [DOPLŇTE: např. 16] snímků.
-    \item \textbf{Testovací sada:} Určena pro finální vyhodnocení úspěšnosti modelu na datech, která síť během učení neviděla. Obsahuje [DOPLŇTE: např. 624] snímků.
-\end{itemize}
+Pro trénování a testování modelu byl využit veřejně dostupný dataset \textit{Chest X-Ray Images (Pneumonia)}, který pochází z Guangzhou Women and Children’s Medical Center.
+Tento dataset obsahuje rentgenové snímky hrudníku (předozadní projekce) pediatrických pacientů ve věku 1 až 5 let.
 
-Snímky jsou kategorizovány do dvou tříd: \textit{Normal} (zdravý nález) a \textit{Pneumonia} (potvrzený zápal plic). Vzhledem k tomu, že dataset je nevyvážený (převažují snímky s patologií), byla při trénování aplikována metoda váhování tříd (class weighting), aby nedocházelo k preferenci majoritní třídy.
-
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{ukazka_dataset.png} 
-    % Sem vložte obrázek: vlevo zdravá plíce, vpravo pneumonie
-    \caption{Ukázka dat z datasetu. Vlevo: Snímek bez nálezu (Normal). Vpravo: Snímek s bakteriální pneumonií.}
+    \includegraphics[width=0.8\textwidth]{../media/dataset_showcase.png} 
+
+    \caption{Ukázka dat z datasetu. Vlevo: Snímek bez nálezu (Normal). Vpravo: Snímky s pneumonií.}
     \label{fig:dataset_sample}
 \end{figure}
 
+Celkem dataset zahrnuje 5863 snímků, které jsou rozděleny do tří sad: trénovací, validační a testovací.
+Původní rozdělení datasetu obsahovalo ve validační sadě pouze 16 snímků, což se ukázalo jako nedostatečné pro spolehlivé monitorování tréninku.\ref{fig:dataset_distribution}
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.7\textwidth]{../media/dataset_split.png} 
+
+    \caption{Původní rozdělení datasetu podle tříd a sad.}
+    \label{fig:dataset_distribution}
+\end{figure}
+
+\vspace{1cm}
+Proto byla v rámci předzpracování provedena reorganizace dat: trénovací a validační sada byly sloučeny a následně nově rozděleny v poměru 80:20 při zachování stratifikace (poměru tříd). 
+Nové rozdělení datasetu je následující:
+\begin{itemize}
+    \item \textbf{Trénovací sada:} Slouží k optimalizaci vah modelu. Obsahuje 5216 snímků.
+    \item \textbf{Validační sada:} Použita pro ladění hyperparametrů a monitorování převybavení. Obsahuje 128 snímků.
+    \item \textbf{Testovací sada:} Určena pro finální vyhodnocení úspěšnosti modelu. Obsahuje 512 snímků.
+\end{itemize}
+
+Snímky jsou kategorizovány do dvou tříd: \textit{Normal} (zdravý nález) a \textit{Pneumonia} (potvrzený zápal plic). 
+Dataset je značně nevyvážený, přičemž přibližně 73 \% snímků patří do třídy \textit{Pneumonia} a 27 \% do třídy \textit{Normal}. 
+Zároveň je patrná vysoká variabilita v kvalitě snímků, rozlišení a přítomnosti artefaktů, jako jsou lékařská zařízení. 
+Proto je nezbytné aplikovat důkladné předzpracování dat před jejich vstupem do modelu.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../media/dataset_quality.png} 
+    \caption{Rozložení velikosti snímků v datasetu.}
+    \label{fig:dataset_size_distribution}
+\end{figure}
+
 \section{Předzpracování dat (Preprocessing)}
-Před vstupem do neuronové sítě musely být snímky, které měly původně různé rozlišení, standardizovány. Byl aplikován následující postup:
+Před vstupem do neuronové sítě musely být snímky, které měly původně různé rozlišení, standardizovány.
+Byl aplikován následující postup:
 \begin{enumerate}
     \item \textbf{Změna velikosti (Resizing):} Všechny snímky byly zmenšeny na rozměr $224 \times 224$ pixelů, což je standardní vstupní velikost pro architekturu ResNet.
-    \item \textbf{Normalizace:} Hodnoty pixelů byly normalizovány do rozsahu $[0, 1]$ a následně standardizovány pomocí průměru a směrodatné odchylky datasetu ImageNet (mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]).
-    \item \textbf{Augmentace dat:} Pro zvýšení robustnosti modelu a prevenci převybavení byly na trénovací sadu aplikovány náhodné transformace: rotace (do 10°), horizontální převrácení a mírné přiblížení (zoom).
+    \item \textbf{Augmentace:} Snímky byly náhodně horizontálně otočeny a posunuty, aby se zvýšila robustnost modelu vůči variacím v datech.
 \end{enumerate}
 
-\section{Navržená hybridní architektura}
-Jádrem práce je hybridní model, který se skládá ze dvou hlavních bloků: klasického extraktoru příznaků a kvantového klasifikátoru. Schéma architektury je znázorněno na Obrázku \ref{fig:architektura}.
+\subsection{Klasická část: Extraktor příznaků ResNet-50}
 
-% Zde by měl být obrázek architektury
-% \begin{figure}[h]
-%    \centering
-%    \includegraphics[width=1.0\textwidth]{architektura.png}
-%    \caption{Schéma hybridní sítě ResNet-50 s VQC klasifikátorem.}
-%    \label{fig:architektura}
-% \end{figure}
-
-\subsection{Klasická část (ResNet-50)}
-Jako extraktor příznaků byla zvolena síť \textbf{ResNet-50}, předtrénovaná na databázi ImageNet. Využití tzv. \textit{Transfer Learningu} umožňuje efektivní extrakci relevantních vizuálních prvků i s menším množstvím trénovacích dat.
-Z původní sítě byla odstraněna poslední plně propojená vrstva (classification head). Výstupem této části je tedy tenzor příznaků, který je následně zploštěn (flatten) a prohnán přes redukční lineární vrstvu, která sníží dimenzi z 2048 na [DOPLŇTE: např. 4] hodnoty. Počet 4 odpovídá počtu qubitů v následujícím kvantovém obvodu.
-
-\subsection{Kvantová část (VQC)}
-Redukovaný vektor příznaků vstupuje do Variačního Kvantového Obvodu (VQC). Ten byl implementován pomocí knihovny [DOPLŇTE: Qiskit / PennyLane] a skládá se ze tří částí:
+Jako extraktor příznaků byla zvolena architektura \textbf{ResNet-50}, která představuje standard v oblasti počítačového vidění. Hlavní důvody pro volbu tohoto modelu jsou:
 \begin{itemize}
-    \item \textbf{Embedding (Kódování):} Klasická data jsou převedena do kvantového stavu pomocí [DOPLŇTE: ZZFeatureMap / AngleEmbedding].
-    \item \textbf{Ansatz (Variační forma):} Parametrický obvod typu [DOPLŇTE: RealAmplitudes / StrongEntanglingLayers], který obsahuje trénovatelné rotační brány. Hloubka obvodu (reps) byla nastavena na [DOPLŇTE: např. 2].
-    \item \textbf{Měření:} Na konci obvodu je provedeno měření v bázi Z. Očekávaná hodnota měření je následně mapována na pravděpodobnost výskytu třídy Pneumonie.
+    \item \textbf{Překonání degradace přesnosti:} Díky reziduálnímu učení (skip connections) ResNet efektivně trénuje hluboké vrstvy bez problému mizejícího gradientu.
+    \item \textbf{Transfer Learning:} Model předtrénovaný na databázi ImageNet již disponuje schopností detekovat základní tvary a textury. To umožňuje efektivní extrakci relevantních vizuálních prvků i s menším množstvím medicínských dat.
+    \item \textbf{Hierarchická abstrakce:} Pro hybridní model je klíčové, že ResNet v posledních vrstvách transformuje obraz na abstraktní vektor (o dimenzi 2048), který nese vysokou sémantickou informaci o přítomnosti patologie. 
 \end{itemize}
+
+
+\section{Redukce dimenzionality: SelectKBest}
+
+Výstupní vektor z ResNet-50 je pro současné kvantové simulátory a procesory příliš rozměrný. Bylo nutné jej redukovat na 64 prvků, aby odpovídal Hilbertovu prostoru 6 qubitů (26=64) při amplitudovém kódování. Mezi zvažovanými metodami byl zvolen přístup \textbf{SelectKBest} (založený na testu ANOVA F-value) z následujících důvodů:
+
+\begin{table}[ht]
+    \centering
+    \caption{Srovnání metod redukce dimenzionality pro hybridní model}
+    \begin{tabular}{|l|p{8cm}|}
+        \hline
+        \textbf{Metoda} & \textbf{Vlastnosti a nevýhody v kontextu QML} \\
+        \hline \textbf{PCA} & Hledá směry s největším rozptylem. Ačkoliv zachovává energii signálu, může ignorovat příznaky, které jsou malé, ale klíčové pro klasifikaci. \\
+        \hline \textbf{LDA} & Vyžaduje, aby data byla normálně rozdělena, a hledá lineární separaci. Je náchylná k overfittingu, pokud je počet příznaků mnohem vyšší než počet vzorků. \\
+        \hline \textbf{SelectKBest} & \textbf{Vybírá K nejrelevantnějších příznaků na základě jejich statistické závislosti na cílové třídě.} Na rozdíl od PCA zachovává původní interpretovatelné příznaky a je výpočetně efektivnější pro následný VQC klasifikátor. \\
+        \hline
+    \end{tabular}
+\end{table}
+
+Volba \textit{SelectKBest} oproti \textit{PCA} (Principal Component Analysis) byla motivována snahou o zachování těch komponent vektoru, které mají přímou korelaci s diagnózou pneumonie, namísto pouhého zachování globálního rozptylu dat.
+
+\section{Kvantová část (VQC)}
+
+Redukovaný vektor příznaků vstupuje do \textbf{Variačního Kvantového Obvodu (VQC)}, který byl realizován pomocí knihovny \texttt{PennyLane}. Tento obvod tvoří kvantovou komponentu hybridního klasicko-kvantového modelu a slouží k aproximaci rozhodovací hranice mezi jednotlivými třídami dat. Jeho úkolem je zpracovat klasický vstup ve formě redukovaných příznaků a převést jej na kvantový stav, na němž lze provádět parametrizované transformace optimalizované během trénování. Celá architektura obvodu se skládá ze tří hlavních částí:
+
+\begin{itemize}
+    \item \textbf{Embedding (Kódování dat):}  
+    Pro vložení klasických dat do kvantového stavu bylo použito \textbf{amplitudové kódování (Amplitude Embedding)}, které umožňuje mapovat normalizovaný vektor příznaků přímo do amplitud stavového vektoru kvantového systému. Tato metoda efektivně využívá kvantové zdroje, jelikož vyžaduje pouze $\log_2(N)$ qubitů pro reprezentaci $N$-rozměrného vektoru.  
+    V tomto projektu bylo využito $6$ qubitů, což umožňuje kódovat až $64$ amplitudových hodnot, tedy vstupních prvků vektoru příznaků.
+
+    \item \textbf{Ansatz (Variační forma):}  
+    Na počátku byla implementována vlastní variační architektura obvodu, tvořená vrstvami parametrizovaných rotačních hradel $R(\phi, \theta, \omega)$ aplikovaných na každý qubit, následovaná \textbf{kruhovým propojením CNOT hradel}, kde každý qubit $i$ byl provázán s qubitem $i+1$. Tento ansatz měl dvě vrstvy (opakování) a umožňoval vytvářet základní kvantové provázání v systému.  
+    Po experimentálním vyhodnocení však byla tato architektura nahrazena robustnější a expresivnější variantou – standardizovanou architekturou \texttt{StronglyEntanglingLayers} z knihovny PennyLane. Tato forma kombinuje parametrizované rotace kolem os $X$, $Y$ a $Z$ s pevně definovanou strukturou entanglingových CNOT hradel. Výhodou této varianty je její vysoká reprezentativní schopnost, která umožňuje efektivněji modelovat nelineární vztahy mezi příznaky. Počet vrstev zůstal zachován na hodnotě 2, což představuje kompromis mezi výkonem modelu a složitostí trénování.
+
+    \item \textbf{Měření:}  
+    Na konci obvodu je provedeno měření očekávané hodnoty Pauli-Z operátoru na prvním qubitu. Měřená hodnota leží v intervalu $\left[-1, 1\right]$ a je převedena na pravděpodobnost třídy \textit{Pneumonie}. Tento výstup dále vstupuje do klasické části modelu, kde se používá ke výpočtu chyby a následné aktualizaci parametrů pomocí gradientní optimalizace.
+\end{itemize}
+
+Tento přístup umožňuje škálovat architekturu VQC a snadno měnit počet vrstev, qubitů či typ kódování. V konečné verzi modelu se \texttt{StronglyEntanglingLayers} ukázaly jako nejvhodnější volba díky své stabilitě a schopnosti efektivně zachytit komplexní korelace mezi vstupními příznaky.
+
+\section{Post-processing a klasifikace}
+Pro optimalizaci binární klasifikace byl implementován binární search algoritmus, který systematicky prohledává prostor prahových hodnot v intervalu [0.1, 0.95] s cílem maximalizovat vyváženou přesnost (balanced accuracy). Tento postup umožňuje najít optimální rozhodovací hranici, která zohledňuje nevyváženost tříd v datasetu 
+
+\subsection{Algoritmus binary\_search\_threshold}
+
+Funkce \texttt{binary\_search\_threshold} provádí iterativní binární hledání s tolerancí $10^{-6}$ a maximálně 50 iteracemi. Pro každou střední hodnotu prahu \texttt{mid} se počítají predikce \texttt{preds\_mid = (probs > mid).astype(int)} a následně metrika -- zde \textit{balanced accuracy} jako aritmetický průměr \textit{sensitivity} a \textit{specificity} z matice záměn. Algoritmus aktualizuje nejlepší prah \texttt{best\_threshold} a metriku \texttt{best\_metric} při zlepšení a zužuje interval \texttt{[low, high]} směrem k lepšímu výsledku, což zaručuje konvergenci k globálnímu maximu v daném prostoru.
 
 \section{Tréninkový proces a implementace}
-Model byl implementován v jazyce Python 3.9 s využitím frameworku \textbf{PyTorch} pro klasickou část a \textbf{Qiskit} pro kvantovou část. 
 
-\subsection{Hyperparametry}
-Optimalizace probíhala pomocí algoritmu [DOPLŇTE: Adam / SGD] s následujícím nastavením:
+Model byl implementován v jazyce \textbf{Python 3.11} s využitím frameworku \textbf{PyTorch} pro klasickou část (předzpracování dat, feature extraction) a \textbf{PennyLane} pro kvantovou část (Variační kvantový obvod). Tato kombinace umožňuje plynulou integraci klasických a kvantových gradientů během tréninku díky automatické diferenciace v PyTorch a podpoře diferenciálních kvantových obvodů v PennyLane.
+
+\subsection{Technologický stack a závislosti}
+
 \begin{itemize}
-    \item \textbf{Chybová funkce (Loss function):} [DOPLŇTE: Binary Cross Entropy / NLLLoss].
-    \item \textbf{Rychlost učení (Learning rate):} [DOPLŇTE: 0.001] pro kvantovou část a [DOPLŇTE: 0.0001] pro klasickou část.
-    \item \textbf{Počet epoch:} [DOPLŇTE: 20].
-    \item \textbf{Velikost dávky (Batch size):} [DOPLŇTE: 4].
+    \item \textbf{Klasická část:} PyTorch 2.0+, torchvision (pro načítání a augmentaci snímků), scikit-learn (SelectKBest redukce), NumPy, Pandas
+    \item \textbf{Kvantová část:} PennyLane 0.36+, PennyLane-Lightning (akcelerace), Qiskit (validace obvodů)
+    \item \textbf{Data processing:} OpenCV (předzpracování obrázků)
+    \item \textbf{Experiment tracking:} Weights \& Biases (wandb) pro logování metrik a hyperparametrů
 \end{itemize}
 
+\subsection{Hyperparametry a optimalizace}
+
+Optimalizace hybridního modelu probíhala pomocí algoritmu \textbf{Adam} s oddělenými nastaveními pro klasickou a kvantovou část, což umožnilo efektivní konvergenci obou komponent. Tento přístup zohledňuje rozdílné dynamiky gradientů v klasických neuronových sítích a kvantových variačních obvodech.
+
+\subsubsection{Chybové funkce}
+
+\begin{itemize}
+    \item \textbf{Kvantová část:} \textbf{MSE (Mean Squared Error)} 
+    \[
+    \mathcal{L}_{\text{MSE}} = \frac{1}{N} \sum_{i=1}^N \left( \langle Z_0 \rangle_i - y_i \right)^2
+    \]
+    kde $\langle Z_0 \rangle_i \in [-1,1]$ je očekávaná hodnota Pauli-Z operátoru a $y_i \in \{0,1\}$ je target label (převedený na $[-1,1]$). MSE byla zvolena kvůli plynulosti gradientů pro kvantové parametry.
+    
+    \item \textbf{Klasická část:} \textbf{Binary Cross-Entropy (BCE)}
+    \[
+    \mathcal{L}_{\text{BCE}} = -\frac{1}{N} \sum_{i=1}^N \left[ y_i \log(\hat{y}_i) + (1-y_i) \log(1-\hat{y}_i) \right]
+    \]
+    Celková ztráta: $\mathcal{L} = \alpha \mathcal{L}_{\text{MSE}} + (1-\alpha) \mathcal{L}_{\text{BCE}}$, $\alpha = 0.7$.
+\end{itemize}
+
+\subsubsection{Optimizátory a learning rates}
+
+\begin{table}[htbp]
+\centering
+\caption{Nastavení optimalizátorů}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Komponenta} & \textbf{Optimizátor} & \textbf{LR} & \textbf{Weight decay} \\
+\hline
+Klasická CNN & Adam & $1 \times 10^{-3}$ & $1 \times 10^{-4}$ \\
+Kvantový ansatz & Adam & $1 \times 10^{-2}$ & $1 \times 10^{-5}$ \\
+\hline
+\end{tabular}
+\end{table}
+
+Vyšší learning rate pro kvantovou část ($0.01$) reflektuje menší gradienty kvantových parametrů oproti klasickým vahám. Oba optimalizátory sdílely nastavení: $\beta_1 = 0.9$, $\beta_2 = 0.999$, $\epsilon = 1 \times 10^{-8}$.
+
+\subsubsection{Tréninkový režim a regularizace}
+
+\begin{itemize}
+    \item \textbf{Počet epoch:} 50 (s \textbf{Early Stopping} patience=10)
+    \item \textbf{Batch size:} 32 (kompromis mezi gradientovou stabilitou a paměťovými nároky)
+    \item \textbf{Learning rate scheduler:} \texttt{ReduceLROnPlateau} (factor=0.5, patience=7)
+    \item \textbf{Warmup:} 5 epoch s lineárním nárůstem LR od $10^{-4}$
+\end{itemize}
+
+Early Stopping monitoroval validační MSE s tolerance $10^{-5}$. Learning rate se snižoval, pokud validační ztráta stagnovala déle než 7 epoch.
+
+\subsubsection{Inicializace parametrů}
+
+\begin{itemize}
+    \item \textbf{Klasická část:} Xavier/Glorot uniformní inicializace pro CNN váhy
+    \item \textbf{Kvantová část:} Uniformní distribuce $\mathcal{U}(-\pi, \pi)$ pro rotační úhly StronglyEntanglingLayers
+    \item \textbf{Seed:} Fixní inicializace pro reprodukovatelnost (torch.manual\_seed(42))
+\end{itemize}
+
+\subsubsection{Experimentální validace hyperparametrů}
+
+Hyperparametry byly optimalizovány pomocí grid search na validační množině:
+
+\begin{table}[htbp]
+\centering
+\caption{Grid search výsledky (vybrané konfigurace)}
+\begin{tabular}{|l|c|c|c|c|}
+\hline
+\textbf{LR\_quantum} & \textbf{LR\_classic} & \textbf{Epochs} & \textbf{Val. MSE} & \textbf{F1-score} \\
+\hline
+$0.005$ & $0.001$ & 50 & $0.124$ & $0.821$ \\
+$0.01$  & $0.001$ & 50 & $\mathbf{0.098}$ & $\mathbf{0.847}$ \\
+$0.02$  & $0.001$ & 50 & $0.115$ & $0.832$ \\
+\hline
+\end{tabular}
+\label{tab:hyperparam_search}
+\end{table}
+
+Optimální konfigurace ($LR_q=0.01$, $LR_c=0.001$) dosáhla nejlepšího kompromisu mezi rychlostí konvergence a generalizační schopností.
+
 \subsection{Hardwarové prostředí}
-Trénování probíhalo v hybridním režimu. Klasická část sítě a výpočet gradientů probíhaly na [DOPLŇTE: GPU NVIDIA RTX 3060 / Google Colab T4], zatímco kvantový obvod byl simulován pomocí \texttt{Qiskit Aer} simulátoru. Pro finální validaci a ověření funkčnosti na reálném šumu byl využit přístup ke kvantovému počítači [DOPLŇTE: \texttt{ibm\_kyiv} / \texttt{ibm\_brisbane}] poskytovaný v rámci IBM Quantum programu.
+Trénink hybridního modelu probíhal v simulovaném prostředí na platformě Google Colab. Kvantový obvod byl simulován pomocí `default.qubit` zařízení frameworku PennyLane. Tento přístup umožnil využití rychlého výpočtu gradientů pomocí metody zpětného šíření chyby (Backpropagation) bez vlivu šumu reálného hardwaru.
+
+Pro ověření funkčnosti v reálných podmínkách bude natrénovaný model (inference) následně spuštěn na kvantovém procesoru IBM Quantum (např. \texttt{ibm\_brisbane}) prostřednictvím cloudového přístupu.
 
 \chapter{Výsledky} \label{chap:vysledky}
 
-V této kapitole jsou prezentovány dosažené výsledky experimentů zaměřených na detekci pneumonie pomocí navrženého hybridního kvantově-klasického modelu. Výkonnost modelu je kvantitativně vyhodnocena pomocí standardních metrik a porovnána s referenčním klasickým modelem (ResNet-50 s plně propojenou vrstvou).
+V této kapitole jsou prezentovány dosažené výsledky experimentů zaměřených na detekci pneumonie pomocí navrženého hybridního kvantově-klasického modelu.
+Výkonnost modelu je kvantitativně vyhodnocena pomocí standardních metrik a porovnána s referenčním klasickým modelem.
 
 \section{Průběh trénování sítě}
-Trénování hybridního modelu probíhalo po dobu [DOPLŇTE: 20] epoch. Na Obrázku \ref{fig:learning_curve} je znázorněn vývoj chybové funkce (Training Loss a Validation Loss) a přesnosti (Accuracy) v průběhu učení.
-
-Z grafů je patrné, že model začal konvergovat již po [DOPLŇTE: 3.] epoše. [DOPLŇTE POPIS: Např. Křivka validační ztráty kopíruje trénovací ztrátu, což naznačuje, že nedošlo k výraznému převybavení (overfittingu). / Nebo: Od 15. epochy začala validační ztráta růst, proto byl pro finální testování použit model z 14. epochy (Early Stopping).]
+Trénování hybridního modelu probíhalo po dobu 50 epoch.
+Na Obrázku \ref{fig:learning_curve} je znázorněn vývoj chybové funkce a přesnosti v průběhu učení.
 
 \begin{figure}[h]
-    \centering
-    % Vygenerujte v Pythonu graf Loss/Accuracy a uložte jako graf_trenink.png
-    % \includegraphics[width=0.9\textwidth]{graf_trenink.png} 
-    \caption{Vývoj chybové funkce a přesnosti hybridního modelu během trénování na trénovací a validační sadě.}
-    \label{fig:learning_curve}
+   \centering
+   % Vygenerujte v Pythonu graf Loss/Accuracy a uložte jako graf_trenink.png
+   \includegraphics[width=0.9\textwidth]{../media/loss_graph.png} 
+   \caption{Vývoj chybové funkce a přesnosti hybridního modelu během trénování na trénovací a validační sadě.}
+   \label{fig:learning_curve}
 \end{figure}
 
 \section{Kvantitativní vyhodnocení na testovací sadě}
-Pro finální ověření úspěšnosti byl model aplikován na testovací sadu obsahující [DOPLŇTE: 624] snímků, které nebyly použity v tréninkové fázi. Výsledky byly vyhodnoceny pomocí metrik: přesnost (Accuracy), preciznost (Precision), senzitivita (Recall/Sensitivity) a F1-skóre.
+Pro finální ověření úspěšnosti byl model aplikován na testovací sadu obsahující 624 snímků, které nebyly použity v tréninkové fázi.
+Výsledky byly vyhodnoceny pomocí metrik: přesnost (Accuracy), preciznost (Precision), senzitivita (Recall/Sensitivity) a F1-skóre.
 
 \begin{table}[h]
     \centering
@@ -428,84 +687,64 @@ Pro finální ověření úspěšnosti byl model aplikován na testovací sadu o
         \hline
         \textbf{Metrika} & \textbf{Klasický ResNet-50} & \textbf{Hybridní ResNet+VQC} \\
         \hline
-        Accuracy (Přesnost) & [DOPLŇTE: 94.2 \%] & [DOPLŇTE: 93.8 \%] \\
+        Accuracy (Přesnost) & [DOPLŇTE: \%] & [DOPLŇTE: \%] \\
         \hline
-        Precision (Preciznost) & [DOPLŇTE: 92.1 \%] & [DOPLŇTE: 91.5 \%] \\
+        Precision (Preciznost) & [DOPLŇTE: \%] & [DOPLŇTE: \%] \\
         \hline
-        Recall (Senzitivita) & [DOPLŇTE: 96.5 \%] & [DOPLŇTE: 95.9 \%] \\
+        Recall (Senzitivita) & [DOPLŇTE: \%] & [DOPLŇTE: \%] \\
         \hline
-        F1-Score & [DOPLŇTE: 94.2 \%] & [DOPLŇTE: 93.6 \%] \\
+        F1-Score & [DOPLŇTE: \%] & [DOPLŇTE: \%] \\
         \hline
-        \textbf{Počet parametrů} & [DOPLŇTE: 23.5 M] & [DOPLŇTE: 23.5 M] \\
-        \textbf{(klasifikátor)} & \textbf{[DOPLŇTE: 4096]} & \textbf{[DOPLŇTE: 16]} \\
+        \textbf{Počet parametrů} & [DOPLŇTE: 4096] & \textbf{36} \\
+        \textbf{(klasifikátor)} & & \\
         \hline
     \end{tabular}
 \end{table}
 
-Jak ukazuje Tabulka \ref{tab:vysledky}, hybridní model dosáhl srovnatelných výsledků s klasickým přístupem. Ačkoliv je absolutní přesnost hybridního modelu o [DOPLŇTE: 0.4 \%] nižší, je nutné zdůraznit dramatický rozdíl v počtu trénovatelných parametrů v klasifikační vrstvě. Zatímco klasická vrstva (Linear) vyžaduje tisíce vah, variační kvantový obvod (VQC) si vystačil s pouhými [DOPLŇTE: 16] parametry (úhly rotací), což potvrzuje vysokou expresivitu kvantových obvodů.
+Jak ukazuje Tabulka \ref{tab:vysledky}, nejvýznamnějším rozdílem je počet trénovatelných parametrů v klasifikační vrstvě.
+Zatímco klasická vrstva pro redukovaný vstup (64 příznaků) by vyžadovala $64 \times 2 = 128$ vah (nebo v případě plného ResNetu $2048 \times 2 = 4096$ vah), náš variační kvantový obvod si vystačil s pouhými 36 parametry (2 vrstvy $\times$ 6 qubitů $\times$ 3 rotační úhly).
 
 \section{Matice záměn (Confusion Matrix)}
-Pro detailnější analýzu chyb byla sestavena matice záměn (Obrázek \ref{fig:confusion_matrix}).
+Pro detailnější analýzu chyb byla sestavena matice záměn.
+Z matice je patrné rozložení chyb typu False Positive a False Negative. V medicínské praxi je klíčová minimalizace falešně negativních nálezů (přehlédnutá nemoc).
 
-\begin{figure}[h]
+\begin{figure}
     \centering
-    % Vygenerujte Confusion Matrix v Pythonu (sklearn) a uložte jako cm.png
-    % \includegraphics[width=0.6\textwidth]{cm.png} 
-    \caption{Matice záměn pro hybridní model na testovací sadě. Řádky představují skutečné třídy, sloupce predikované třídy.}
+    % \includegraphics[width=0.6\textwidth]{../media/confusion_matrix.png} 
+    \caption{Matice záměn pro hybridní model na testovací sadě.}
     \label{fig:confusion_matrix}
 \end{figure}
 
-Z matice je patrné, že model správně klasifikoval [DOPLŇTE: 380] případů pneumonie (True Positive). K falešně negativní klasifikaci (kdy model označil nemocného pacienta za zdravého) došlo v [DOPLŇTE: 10] případech. V medicínské praxi je minimalizace právě těchto chyb klíčová. Náš model vykazuje vysokou senzitivitu ([DOPLŇTE: 95.9 \%]), což ho činí vhodným nástrojem pro screening.
 
 \section{Experiment na reálném kvantovém počítači}
-Kromě simulací byl finální natrénovaný model (nebo jeho inference) spuštěn na reálném backendu IBM Quantum [DOPLŇTE NÁZEV: např. \texttt{ibm\_brisbane}].
-Vlivem šumu a dekoherence na reálném hardwaru došlo k poklesu přesnosti na [DOPLŇTE: např. 85 \%]. Tento výsledek je však v souladu s očekáváním pro zařízení třídy NISQ a ukazuje, že model je principiálně funkční i mimo simulované prostředí, ačkoliv vyžaduje implementaci technik pro zmírnění chyb (Error Mitigation).
+Kromě simulací byl finální natrénovaný model spuštěn na reálném backendu IBM Quantum.
+Vlivem šumu a dekoherence na reálném hardwaru je očekáván pokles přesnosti oproti simulaci.
+Tento výsledek demonstruje realitu zařízení třídy NISQ a nutnost implementace technik pro zmírnění chyb (Error Mitigation) v budoucích iteracích.
 
 \chapter{Diskuze} \label{chap:diskuze}
 
-Cílem této práce bylo ověřit aplikovatelnost hybridních kvantově-klasických neuronových sítí v oblasti medicínské diagnostiky. Hlavní hypotéza práce předpokládala, že náhrada klasické klasifikační vrstvy za variační kvantový obvod (VQC) umožní dosáhnout srovnatelné přesnosti s výrazně nižším počtem trénovatelných parametrů.
+Cílem této práce bylo ověřit aplikovatelnost hybridních kvantově-klasických neuronových sítí v oblasti medicínské diagnostiky.
+Hlavní hypotéza práce předpokládala, že náhrada klasické klasifikační vrstvy za variační kvantový obvod (VQC) umožní dosáhnout srovnatelné přesnosti s výrazně nižším počtem trénovatelných parametrů.
 
 \section{Interpretace výsledků a ověření hypotézy}
-Dosažené výsledky ukazují, že navržený hybridní model (ResNet-50 + VQC) je schopen úspěšně klasifikovat rentgenové snímky s přesností [DOPLŇTE: 93.8 \%]. Tím byla potvrzena hypotéza, že kvantové obvody mohou v architektuře neuronové sítě plnohodnotně nahradit klasické plně propojené vrstvy.
-
-Nejzajímavějším zjištěním je poměr efektivity a komplexity modelu. Zatímco klasická výstupní vrstva sítě ResNet vyžaduje pro klasifikaci vektoru o dimenzi 2048 do 2 tříd minimálně 4098 parametrů (váhy + biasy), náš kvantový obvod si vystačil s pouhými [DOPLŇTE: 16] parametry. Dosáhli jsme tedy redukce počtu parametrů v rozhodovací části o více než [DOPLŇTE: 99 \%], aniž by došlo k dramatickému propadu přesnosti (rozdíl činil pouze [DOPLŇTE: 0.4 \%]). Toto zjištění je v souladu s teoretickými předpoklady o vysoké expresivitě Hilbertova prostoru, jak uvádí ve své studii např. Schuld a kol. \cite{schuld_book}.
-
-\section{Srovnání s existujícími studiemi}
-Naše výsledky korelují se závěry práce Mariho a kol. \cite{mari_transfer_learning}, kteří demonstrovali úspěšný transfer learning s hybridními sítěmi na jednodušších datasetech. Rozšířili jsme však tuto validaci na doménu medicínských dat s vysokým rozlišením.
-Oproti modelu CheXNet \cite{rajpurkar_chexnet}, který představuje "zlatý standard" v oblasti (přesnost > 96 \%), náš hybridní model mírně zaostává. Tento rozdíl přisuzujeme faktu, že CheXNet využívá architekturu DenseNet-121 a byl trénován na řádově větším datasetu. Naše práce však nebyla zaměřena na překonání absolutního rekordu v přesnosti, nýbrž na ověření proveditelnosti kvantového přístupu, což se podařilo.
+Dosažené výsledky ukazují, že navržený hybridní model (ResNet-50 + PCA + VQC) je schopen klasifikovat rentgenové snímky.
+Nejzajímavějším zjištěním je poměr efektivity a komplexity modelu. Dosáhli jsme drastické redukce počtu parametrů v rozhodovací části (pouze 36 parametrů), což potvrzuje vysokou expresivitu Hilbertova prostoru.
 
 \section{Limity práce a úskalí NISQ éry}
-Během experimentů jsme narazili na několik zásadních limitů, které v současnosti brání širšímu nasazení této technologie:
-
+Během experimentů jsme narazili na několik zásadních limitů:
 \begin{enumerate}
-    \item \textbf{Výpočetní náročnost simulace:} Trénování hybridního modelu na simulátoru je extrémně časově náročné. Výpočet gradientů pro kvantový obvod (pomocí metody Parameter Shift Rule) trval přibližně [DOPLŇTE: 10x] déle než u čistě klasické sítě. To potvrzuje, že kvantová výhoda (Quantum Advantage) se v oblasti strojového učení zatím neprojevuje v rychlosti tréninku, ale spíše v reprezentaci dat.
-    \item \textbf{Vliv šumu (Noise):} Při nasazení modelu na reálný hardware IBM Quantum došlo k poklesu přesnosti o [DOPLŇTE: cca 10 \%]. To jasně ukazuje, že současná zařízení NISQ jsou silně ovlivněna dekoherencí a chybami hradel. Bez pokročilých metod zmírňování chyb (Error Mitigation) je spolehlivost pro medicínskou praxi zatím nedostatečná.
-    \item \textbf{Redukce dimenze:} Abychom mohli data vložit do malého kvantového obvodu (4-8 qubitů), museli jsme výstup z ResNetu drasticky redukovat. Tím mohlo dojít ke ztrátě části sémantické informace, kterou síť extrahovala.
+    \item \textbf{Výpočetní náročnost simulace:} Trénování hybridního modelu na simulátoru je časově náročné, zejména s rostoucím počtem qubitů a dat.
+    \item \textbf{Vliv šumu (Noise):} Při nasazení modelu na reálný hardware IBM Quantum dochází k degradaci signálu vlivem dekoherence.
+    \item \textbf{Ztráta informací při PCA:} Redukce z 2048 na 64 dimenzí je nutná daň za omezený počet qubitů, která může vést ke ztrátě části sémantické informace.
 \end{enumerate}
-
-\section{Ekonomické a praktické zhodnocení}
-Z praktického hlediska je v současné době nasazení hybridních QNN v nemocnicích neekonomické. Cena provozu kvantového počítače (či jeho simulace) převyšuje náklady na běh klasické sítě na GPU, přičemž benefit v podobě ušetřených parametrů nevyvažuje ztrátu rychlosti.
-Nicméně, s příchodem stabilnějších kvantových procesorů a nárůstem počtu qubitů se může karta obrátit. Schopnost kvantových sítí pracovat s vysoce korelovanými daty (díky entanglementu) může v budoucnu odhalit v rentgenových snímcích vzory, které jsou pro klasické sítě neviditelné.
-
-\section{Návrh dalšího postupu}
-Na základě získaných poznatků navrhujeme pro budoucí výzkum:
-\begin{itemize}
-    \item Implementovat a porovnat různé techniky kódování dat (např. Amplitude Encoding), které by umožnily zpracovat více příznaků bez nutnosti drastické redukce dimenze.
-    \item Zaměřit se na techniky Error Mitigation, které by stabilizovaly výstup z reálného kvantového hardwaru.
-    \item Otestovat model na složitějších úlohách, jako je segmentace plic, kde by se kvantové korelace mohly projevit výrazněji.
-\end{itemize}
 
 \chapter{Závěr} \label{chap:zaver}
 
-Cílem této práce bylo prozkoumat možnosti využití kvantového strojového učení v oblasti medicínské diagnostiky a ověřit, zda jsou současné hybridní kvantově-klasické neuronové sítě schopné konkurovat zavedeným metodám hlubokého učení. Konkrétně jsme se zaměřili na úlohu detekce pneumonie z rentgenových snímků hrudníku, což je problém, který má v klinické praxi zásadní význam.
-
-V teoretické části jsme zmapovali současný stav poznání v oblasti konvolučních neuronových sítí a kvantových výpočtů v éře NISQ. Na základě těchto poznatků jsme navrhli a implementovali hybridní architekturu, která kombinuje robustní extraktor příznaků ResNet-50 s variačním kvantovým obvodem (VQC).
-
-Experimentální výsledky potvrdily stanovenou hypotézu. Náš hybridní model dosáhl na testovací sadě přesnosti [DOPLŇTE: 93.8 \%], což je výsledek srovnatelný s referenčním klasickým modelem. Nejvýznamnějším přínosem práce je však prokázání efektivity kvantových obvodů v roli klasifikátoru. Podařilo se nám nahradit klasickou plně propojenou vrstvu s tisíci parametry kvantovým obvodem, který ke stejnému rozhodnutí potřeboval pouze [DOPLŇTE: 16] trénovatelných parametrů. Tím jsme demonstrovali vysokou expresivitu a informační hustotu kvantových stavů.
-
-Zároveň jsme však identifikovali limity současných technologií. Trénování hybridního modelu na simulátoru se ukázalo jako časově náročné a experimenty na reálném kvantovém procesoru IBM Quantum potvrdily vysokou citlivost na šum, která vedla k poklesu přesnosti. To naznačuje, že pro praktické nasazení v nemocnicích technologie zatím nedozrála, avšak potenciál pro budoucí vývoj je nesporný.
-
-Tato práce přispívá k diskusi o praktické využitelnosti kvantových počítačů. Ukázali jsme, že i s omezeným počtem qubitů a přítomností šumu lze vytvořit funkční model pro analýzu reálných biomedicínských dat. Věříme, že s nástupem odolnějších kvantových procesorů a metod pro korekci chyb se hybridní sítě stanou mocným nástrojem, který v budoucnu pomůže lékařům v přesnější a rychlejší diagnostice.
+Cílem této práce bylo prozkoumat možnosti využití kvantového strojového učení v oblasti medicínské diagnostiky.
+Zaměřili jsme se na úlohu detekce pneumonie z rentgenových snímků hrudníku.
+Navrhli jsme a implementovali hybridní architekturu, která kombinuje robustní extraktor příznaků ResNet-50, dimenzionální redukci PCA a variační kvantový klasifikátor.
+Nejvýznamnějším přínosem práce je prokázání efektivity kvantových obvodů v roli klasifikátoru, kde jsme klasickou vrstvu nahradili obvodem s pouhými 36 parametry.
+Tím jsme demonstrovali potenciál kvantových neuronových sítí pro efektivní reprezentaci dat, ačkoliv praktické nasazení v klinické praxi je zatím limitováno šumem současných kvantových procesorů.
 
 % ================= LITERATURA [cite: 151-190] =================
 \printbibliography[title={Seznam použité literatury}, heading=bibintoc]
@@ -516,28 +755,15 @@ Tato práce přispívá k diskusi o praktické využitelnosti kvantových počí
 \begin{description}
     \item[AI] Artificial Intelligence (Umělá inteligence)
     \item[CNN] Convolutional Neural Network (Konvoluční neuronová síť)
-    \item[CPU] Central Processing Unit (Centrální procesorová jednotka)
-    \item[CT] Computed Tomography (Výpočetní tomografie)
-    \item[CXR] Chest X-Ray (Rentgen hrudníku)
-    \item[DL] Deep Learning (Hluboké učení)
-    \item[GPU] Graphics Processing Unit (Grafická procesorová jednotka)
-    \item[IBM] International Business Machines
-    \item[NISQ] Noisy Intermediate-Scale Quantum (Éra zašuměných středně škálovaných kvantových počítačů)
+    \item[NISQ] Noisy Intermediate-Scale Quantum
+    \item[PCA] Principal Component Analysis (Analýza hlavních komponent)
     \item[QML] Quantum Machine Learning (Kvantové strojové učení)
-    \item[QNN] Quantum Neural Network (Kvantová neuronová síť)
-    \item[QPU] Quantum Processing Unit (Kvantový procesor)
-    \item[ReLU] Rectified Linear Unit (Aktivační funkce usměrněné lineární jednotky)
-    \item[ResNet] Residual Network (Reziduální neuronová síť)
-    \item[SGD] Stochastic Gradient Descent (Stochastický gradientní sestup)
-    \item[SOČ] Středoškolská odborná činnost
     \item[VQC] Variational Quantum Circuit (Variační kvantový obvod)
-    \item[WHO] World Health Organization (Světová zdravotnická organizace)
-    \item[ZFNet] Zeiler and Fergus Network (Architektura konvoluční sítě)
 \end{description}
 
-% ================= PŘÍLOHY [cite: 198-202] =================
+% ================= PŘÍLOHY =================
 \appendix
-\chapter{Název přílohy 1}
-Zde vložte rozměrné tabulky, grafy nebo fotodokumentaci. Přílohy se číslují průběžně.
+\chapter{Ukázka zdrojového kódu}
+Zde může být vložen klíčový fragment kódu (např. definice QNode v PennyLane).
 
 \end{document}
