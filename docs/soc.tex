@@ -412,29 +412,59 @@ V reakci na tento problém vznikla celá řada koncepčně odlišných strategi�
 
 V praxi se často kombinuje několik z těchto přístupů: volí se mělký, lokálně proplétající ansatz, vhodně se inicializují parametry a používá se nákladová funkce založená na lokálních měřeních. Teoretické i numerické studie ukazují, že takové nastavení výrazně zlepšuje trénovatelnost variačních kvantových obvodů a představuje v současnosti nejrealističtější cestu k využití VQC v éře NISQ.
 
+\chapter{Cíle práce}
 
-\chapter{Cíle práce} \label{chap:cile}
+Hlavním cílem této práce je navrhnout, implementovat a experimentálně ověřit
+architekturu hybridní kvantově-klasické neuronové sítě pro medicínskou
+diagnostiku. Konkrétně se práce zaměřuje na detekci pneumonie z rentgenových
+snímků hrudníku v kontextu současných hardwarových omezení éry NISQ
+(\emph{Noisy Intermediate-Scale Quantum}).
 
-Hlavním cílem této práce je navrhnout, implementovat a experimentálně ověřit architekturu hybridní kvantově-klasické neuronové sítě pro medicínskou diagnostiku.
-Konkrétně se práce zaměřuje na detekci pneumonie z rentgenových snímků hrudníku v kontextu současných hardwarových omezení éry NISQ (Noisy Intermediate-Scale Quantum).
-Na základě teoretické rešerše a analýzy problému byly stanoveny následující dílčí cíle:
+Na základě teoretické rešerše a analýzy problému byly stanoveny následující
+dílčí cíle:
 
 \begin{enumerate}
-    \item \textbf{Implementace hybridního modelu:} Vytvořit funkční model, který propojuje moderní klasickou konvoluční síť (ResNet-50) ve funkci extraktoru příznaků s variačním kvantovým obvodem (VQC), jenž bude plnit roli klasifikátoru.
-    \item \textbf{Optimalizace pro NISQ:} Navrhnout vhodné kódování klasických dat do kvantových stavů (data encoding) a strukturu kvantového obvodu (ansatz) tak, aby byl model trénovatelný i na simulátorech či reálných kvantových procesorech s omezeným počtem qubitů.
-    \item \textbf{Experimentální srovnání:} Porovnat výkonnost navrženého hybridního modelu s referenčním čistě klasickým modelem (ResNet-50 s plně propojenou vrstvou) na stejném datasetu.
-    Srovnání bude provedeno z hlediska přesnosti klasifikace (accuracy), citlivosti (recall) a specifičnosti.
-    \item \textbf{Analýza efektivity:} Vyhodnotit, zda zapojení kvantové vrstvy přináší výhodu v podobě snížení počtu trénovatelných parametrů, a posoudit vliv šumu na konvergenci modelu.
+  \item \textbf{Implementace hybridního modelu:}
+  Vytvořit funkční model, který propojuje moderní klasickou konvoluční síť
+  (ResNet-50) ve funkci extraktoru příznaků s variačním kvantovým obvodem (VQC),
+  jenž bude plnit roli klasifikátoru.
+
+  \item \textbf{Optimalizace pro NISQ:}
+  Navrhnout vhodné kódování klasických dat do kvantových stavů
+  (\emph{data encoding}) a strukturu kvantového obvodu (ansatzu) tak, aby byl
+  model trénovatelný i na simulátorech či reálných kvantových procesorech
+  s omezeným počtem qubitů a v přítomnosti šumu.
+
+  \item \textbf{Experimentální srovnání:}
+  Porovnat výkonnost navrženého hybridního modelu s referenčním čistě
+  klasickým modelem nad stejnými PCA-redukovanými příznaky z ResNet-50.
+  Referenční model je realizován jako vícevrstvý perceptron (klasický
+  neuronový klasifikátor) trénovaný na 64rozměrných vektorech příznaků
+  bez použití kvantového obvodu.
+
+  \item \textbf{Analýza efektivity:}
+  Vyhodnotit, zda zapojení kvantové vrstvy přináší výhodu v podobě snížení
+  počtu trénovatelných parametrů v rozhodovací části modelu a jak přítomnost
+  šumu ovlivňuje konvergenci a stabilitu trénování.
 \end{enumerate}
 
-\section*{Výzkumné otázky a hypotézy}
-V souladu s vytýčenými cíli si práce klade za úkol ověřit následující hypotézu:
+\section*{Výzkumné otázky a hypotéza}
+
+V souladu s vytýčenými cíli si práce klade za úkol ověřit následující
+hypotézu:
 
 \begin{quote}
-    \textit{Hybridní kvantově-klasická neuronová síť dokáže dosáhnout při detekci pneumonie srovnatelné klasifikační přesnosti jako konvenční hluboké neuronové sítě, a to při využití řádově nižšího počtu trénovatelných parametrů v rozhodovací vrstvě.}
+Hybridní kvantově-klasická neuronová síť dokáže při detekci pneumonie
+dosáhnout srovnatelné klasifikační přesnosti jako vhodně zvolený čistě
+klasický model nad stejnými příznaky, a to při využití řádově nižšího počtu
+trénovatelných parametrů v rozhodovací (klasifikační) části.
 \end{quote}
 
-Práce dále hledá odpověď na otázku, zda jsou současné metody kvantového strojového učení (QML) dostatečně robustní pro zpracování reálných biomedicínských obrazových dat s vysokým rozlišením, nebo zda jejich aplikaci v praxi prozatím brání hardwarové limity (šum a dekoherence).
+Práce dále hledá odpověď na otázku, zda jsou současné metody kvantového
+strojového učení (QML) dostatečně robustní pro zpracování reálných
+biomedicínských obrazových dat s vysokým rozlišením, nebo zda jejich
+aplikaci v praxi prozatím brání především hardwarové limity (šum a
+dekoherence) kvantových procesorů.
 
 \chapter{Metodika a experimentální část} \label{chap:metodika}
 
@@ -602,6 +632,8 @@ Na takto připravený stav je aplikován variační ansatz navržený jako opako
     \item následného kruhového propletení pomocí CNOT hradel mezi sousedními qubity \(w \rightarrow (w+1) \bmod n\).
 \end{itemize}
 
+\vspace{1cm}
+
 \begin{lstlisting}[language=Python, caption={Použitý ansatz s rotačními hradly a kruhovým propletením.}]
 def ansatz_layer(params, config):
     n_wires = config.n_qubits
@@ -670,7 +702,7 @@ záměn \texttt{confusion\_matrix(y\_test, preds\_t)} odvozena dvojice
 \(\text{Accuracy}\) a \(\text{Balanced accuracy}\). 
 Implementace tohoto post-processingu v Pythonu je následující:
 
-\begin{lstlisting}[language=Python, caption={Diskrétní optimalizace prahu podle balanced accuracy.}]
+\begin{lstlisting}[language=Python, caption={Diskrétní optimalizace prahu podle balanced accuracy.}][H]
 y_test = y_data['test']
 probs = test_probs
 
@@ -725,102 +757,104 @@ Tato hodnota prahu odpovídá výchozí hodnotě \(\tau = 0{,}5\) použité při
 hlavních testovacích metrik (Accuracy, F1, AUC), a diskretizované prohledávání
 tak slouží primárně jako analýza citlivosti modelu na volbu rozhodovacího prahu. 
 
-\subsection{Hyperparametry a optimalizace}
+\subsubsection*{4.5.3 Hyperparametry a optimalizace}
 
-Optimalizace navrženého řešení probíhala ve dvou na sobě nezávislých krocích: (i) trénink kvantového klasifikátoru VQC v rámci hybridního modelu s fixovanou klasickou částí (ResNet-50 + PCA pipeline) a (ii) trénink čistě klasického baseline klasifikátoru nad stejnými 64rozměrnými příznaky. V obou případech byl použit algoritmus \textbf{Adam}, avšak s odlišným nastavením learning rate, plánů učení a chybových funkcí reflektujících rozdílný charakter výstupu kvantového obvodu a sigmoidového klasického modelu.
+Optimalizace navrženého řešení probíhala ve dvou na sobě nezávislých krocích:
+(i) trénink kvantového klasifikátoru VQC v rámci hybridního modelu s fixovanou
+klasickou částí (ResNet-50 + PCA pipeline) a (ii) trénink čistě klasického baseline
+klasifikátoru nad stejnými 64rozměrnými příznaky. V obou případech byl použit
+optimalizační algoritmus Adam, avšak s odlišným nastavením plánů učení a chybových
+funkcí reflektujících rozdílný charakter výstupu kvantového obvodu a sigmoidového
+klasického modelu.
 
-\subsubsection{Chybové funkce}
-
-\begin{itemize}
-    \item \textbf{Kvantová část (VQC): vážená MSE}
-
-    Kvantový klasifikátor VQC pro každý vzorek vrací očekávanou hodnotu Pauliho operátoru \(Z\) na vybraném qubitu,
-    \[
-        z_i = \langle Z_0 \rangle_i \in [-1,1],
-    \]
-    která je následně interpretována jako skóre pneumonie po lineárním přemapování na interval \([0,1]\) až ve fázi vyhodnocení. Aby bylo možné přímo optimalizovat kvantové parametry na výstupu v intervalu \([-1,1]\), jsou binární labely \(y_i \in \{0,1\}\) nejprve převedeny na cílové hodnoty
-    \[
-        t_i = 
-        \begin{cases}
-            -1, & y_i = 0 \ (\text{Normal}),\\
-            +1, & y_i = 1 \ (\text{Pneumonia}),
-        \end{cases}
-    \]
-    a používá se vážená střední kvadratická chyba
-    \[
-        \mathcal{L}_{\text{QMSE}} 
-        = \frac{1}{N} \sum_{i=1}^N w(t_i)\,\bigl(z_i - t_i\bigr)^2.
-    \]
-    Váhy \(w(t_i)\) jsou odvozeny z poměru tříd v trénovací sadě tak, aby byla \emph{důrazněji penalizována převaha třídy Pneumonia} a zohledněna výrazná nevyváženost dat (\(\approx 74{,}2\,\%\) snímků s pneumonií). Tato volba MSE (namísto například BCE) je motivována plynulými gradienty v prostoru parametrů ansatzu a dobrou podporou v autograd backendu knihovny PennyLane.
-
-    \item \textbf{Klasický baseline: vážená Binary Cross-Entropy (BCE)}
-
-    Čistě klasický baseline model nad 64rozměrnými příznaky z PCA vrací pro každý vzorek pravděpodobnost pneumonie \(\hat{p}_i \in [0,1]\) pomocí sigmoidové výstupní neurony. Pro trénink je použita vážená binární cross–entropie
-    \[
-        \mathcal{L}_{\text{WBCE}}
-        = -\frac{1}{N} \sum_{i=1}^N w(y_i)\,\Bigl[\,y_i \log(\hat{p}_i) 
-        + \bigl(1-y_i\bigr)\log\bigl(1-\hat{p}_i\bigr)\Bigr],
-    \]
-    kde funkce \(w(y_i)\) nastavuje vyšší váhu vzorkům třídy \textit{Normal} tak, aby se zmírnil vliv nevyváženosti a model nebyl příliš „přesvědčen“ o přítomnosti pneumonie. V implementaci byla zvolena jednoduchá schémata vah \(w(0) > w(1)\), což vede ke snížení počtu falešně negativních případů pneumonie při zachování rozumné specificity.
-\end{itemize}
-
-Na rozdíl od původního návrhu není v této práci minimalizována jediná sdílená kombinovaná ztráta \(\mathcal{L} = \alpha \mathcal{L}_{\text{QMSE}} + (1-\alpha)\mathcal{L}_{\text{WBCE}}\), ale kvantový a klasický model jsou optimalizovány \emph{odděleně} se svými vlastními chybovými funkcemi a hyperparametry.
-
-\subsubsection{Optimalizátory a learning rates}
-
-V obou experimentech je použit optimalizační algoritmus \textbf{Adam} se standardním nastavením \(\beta_1 = 0{,}9\), \(\beta_2 = 0{,}999\) a \(\epsilon = 10^{-8}\). Learning rate a případná regulace jsou voleny odlišně pro kvantový ansatz a klasický baseline klasifikátor:
-
-\begin{table}[htbp]
-\centering
-\caption{Nastavení optimalizátorů pro kvantový a klasický model}
-\begin{tabular}{|l|c|c|c|}
-\hline
-\textbf{Komponenta} & \textbf{Optimizátor} & \textbf{Learning rate} & \textbf{Weight decay} \\
-\hline
-Klasický baseline (64D MLP) & Adam (PyTorch)     & \(1 \times 10^{-3}\) & \(0.0\) \\
-Kvantový ansatz (VQC)       & Adam (PennyLane)   & \(1 \times 10^{-2}\) & \(0.0\) \\
-\hline
-\end{tabular}
-\end{table}
-
-Vyšší learning rate pro kvantový ansatz (\(0{,}01\)) reflektuje menší velikost gradientů v prostoru kvantových parametrů a potřebu rychlejší explorace parametrického prostoru při zachování stability tréninku. U klasického baseline modelu se naopak osvědčilo konzervativnější nastavení \(1 \times 10^{-3}\), které poskytlo stabilní konvergenci bez oscilací validační ztráty.
-
-\subsubsection{Tréninkový režim a plán učení}
-
-Oba modely byly trénovány s mini–batch velikostí \(\text{batch size} = 16\) a maximálním počtem \(50\) epoch, přičemž byla využita kombinace \textbf{early stopping} a \textbf{cosine annealing} plánu učení.
+\paragraph{Chybové funkce}
 
 \begin{itemize}
-    \item \textbf{Early stopping:} Pro kvantový i klasický model se sledovala validační ztráta s \emph{patience} \(= 10\) epoch. Pokud nedošlo k jejímu zlepšení v daném intervalu, trénink se ukončil a pro další vyhodnocení byly použity parametry s nejnižší dosaženou validační chybou.
-    \item \textbf{Plán učení:} 
-    \begin{itemize}
-        \item U kvantového modelu je Adam kombinován s vlastním \emph{cosine annealing} plánovačem, který plynule snižuje learning rate z počáteční hodnoty na minimální \(\text{LR}_{\text{min}} = 10^{-5}\), přičemž první tři epochy slouží jako lineární \emph{warmup}.
-        \item U klasického baseline modelu je použit plánovač \texttt{CosineAnnealingLR} z knihovny PyTorch s parametrem \(T_{\max} = 50\), který postupně snižuje efektivní learning rate v průběhu tréninku, aniž by byla použita explicitní L2 regularizace (weight decay = 0).
-    \end{itemize}
+  \item \textbf{Kvantová část (VQC): vážená MSE}
+
+  Kvantový klasifikátor VQC pro každý vzorek vrací očekávanou hodnotu Pauliho
+  operátoru $Z$ na vybraném qubitu
+  \[
+    z_i = \langle Z_0 \rangle_i \in [-1,1],
+  \]
+  která je následně interpretována jako skóre pneumonie po lineárním přemapování
+  na interval $[0,1]$ až ve fázi vyhodnocení. Aby bylo možné přímo optimalizovat
+  kvantové parametry na výstupu v intervalu $[-1,1]$, jsou binární labely
+  $y_i \in \{0,1\}$ nejprve převedeny na cílové hodnoty
+  \[
+    t_i =
+    \begin{cases}
+      -1, & y_i = 0 \;(\text{Normal}), \\
+      +1, & y_i = 1 \;(\text{Pneumonia}),
+    \end{cases}
+  \]
+  a používá se vážená střední kvadratická chyba
+  \[
+    L_{\mathrm{QMSE}} = \frac{1}{N} \sum_{i=1}^{N} w(t_i)\,\bigl(z_i - t_i\bigr)^2.
+  \]
+  Váhy $w(t_i)$ jsou odvozeny z poměru tříd v trénovací sadě tak, aby byly chyby
+  na minoritní třídě \emph{Normal} penalizovány výrazněji a kompenzovala se
+  výrazná nevyváženost dat (přibližně $74{,}2\,\%$ snímků s pneumonií). Tato volba
+  MSE (namísto například BCE) je motivována plynulými gradienty v prostoru
+  parametrů ansatzu a dobrou podporou v autograd backendu knihovny PennyLane.
+
+  \item \textbf{Klasický baseline: vážená Binary Cross-Entropy (BCE)}
+
+  Čistě klasický baseline model nad 64rozměrnými příznaky z PCA vrací pro každý
+  vzorek pravděpodobnost pneumonie $\hat{p}_i \in [0,1]$ pomocí sigmoidové
+  výstupní neurony. Pro trénink je použita vážená binární cross–entropie
+  \[
+    L_{\mathrm{WBCE}} = -\frac{1}{N} \sum_{i=1}^{N}
+      w(y_i)\,\bigl[
+        y_i \log(\hat{p}_i) +
+        (1-y_i)\,\log(1-\hat{p}_i)
+      \bigr],
+  \]
+  kde funkce $w(y_i)$ nastavuje vyšší váhu vzorkům třídy \emph{Normal}, aby se
+  zmírnil vliv nevyváženosti a model nebyl příliš „přesvědčen“ o přítomnosti
+  pneumonie. V implementaci je použito jednoduché schéma vah $w(0) > w(1)$,
+  což vede ke snížení počtu falešně negativních případů pneumonie při zachování
+  rozumné specificity.
 \end{itemize}
 
-Tato kombinace vážených chybových funkcí, rozdílného nastavení learning rate a kosinového plánu učení umožnila jak kvantovému, tak klasickému modelu dosáhnout stabilní konvergence při respektování nevyváženosti datasetu a omezených vpočetních možností při simulaci kvantového obvodu.
+Na rozdíl od původního návrhu není v této práci minimalizována jediná sdílená
+kombinovaná ztráta $L = \alpha L_{\mathrm{QMSE}} + (1-\alpha)L_{\mathrm{WBCE}}$,
+ale kvantový a klasický model jsou optimalizovány odděleně se svými vlastními
+chybovými funkcemi a hyperparametry.
 
+\paragraph{Optimalizační hyperparametry a plány učení}
 
-\subsubsection{Tréninkový režim a regularizace}
-
+V obou tréninkových scénářích je použit společný základní soubor
+hyperparametrů:
 \begin{itemize}
-    \item \textbf{Počet epoch:} 50 (s \textbf{Early Stopping} patience=10)
-    \item \textbf{Batch size:} 32 (kompromis mezi gradientovou stabilitou a paměťovými nároky)
-    \item \textbf{Learning rate scheduler:} \texttt{ReduceLROnPlateau} (factor=0.5, patience=7)
-    \item \textbf{Warmup:} 5 epoch s lineárním nárůstem LR od $10^{-4}$
+  \item počet epoch $E = 50$ (s early stoppingem na validační ztrátě),
+  \item velikost batch size $B = 16$,
+  \item počáteční learning rate $\eta_0 = 10^{-3}$,
+  \item trpělivost early stoppingu \texttt{patience} $= 10$ epoch.
 \end{itemize}
 
-Early Stopping monitoroval validační MSE s tolerance $10^{-5}$. Learning rate se snižoval, pokud validační ztráta stagnovala déle než 7 epoch.
+Pro kvantový klasifikátor VQC je nad Adam optimalizátorem použit hladký
+cosinusový plán učení se zahřátím (warm-up). Konkrétně je learning rate v
+epoše $e$ určena schématem
+\[
+  \eta(e) =
+  \begin{cases}
+    \eta_0 \,\dfrac{e}{E_{\mathrm{warmup}}}, & e \leq E_{\mathrm{warmup}}, \\[0.5em]
+    \eta_{\min} + \dfrac{1}{2}\,(\eta_0 - \eta_{\min})
+      \left[1 + \cos\!\left(\pi\,\dfrac{e - E_{\mathrm{warmup}}}{E - E_{\mathrm{warmup}}}\right)\right],
+      & e > E_{\mathrm{warmup}},
+  \end{cases}
+\]
+kde $E_{\mathrm{warmup}} = 3$ a minimální learning rate je $\eta_{\min} = 10^{-5}$.
+Tento plán zajišťuje pozvolný náběh gradientů v úvodních epochách a následné
+plynulé snižování krokové velikosti směrem k minimu.
 
-\subsubsection{Inicializace parametrů}
-
-\begin{itemize}
-    \item \textbf{Klasická část:} Xavier/Glorot uniformní inicializace pro CNN váhy
-    \item \textbf{Kvantová část:} Uniformní distribuce $\mathcal{U}(-\pi, \pi)$ pro rotační úhly StronglyEntanglingLayers
-    \item \textbf{Seed:} Fixní inicializace pro reprodukovatelnost (torch.manual\_seed(42))
-\end{itemize}
-
-Optimální konfigurace ($LR_q=0.01$, $LR_c=0.001$) dosáhla nejlepšího kompromisu mezi rychlostí konvergence a generalizační schopností.
+Klasický baseline model používá rovněž Adam s počátečním learning rate
+$\eta_0 = 10^{-3}$, avšak s vestavěným plánem
+\texttt{CosineAnnealingLR} z knihovny PyTorch, který realizuje cosinusový
+průběh bez explicitní warm-up fáze. V obou případech je trénink ukončen buď
+po dosažení maximálního počtu epoch, nebo dříve, pokud se validační ztráta
+nezlepší po dobu danou parametrem \texttt{patience}.
 
 \section{Softwarové prostředí a knihovny}
 
