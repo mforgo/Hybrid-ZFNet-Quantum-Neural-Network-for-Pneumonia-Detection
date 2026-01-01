@@ -1,283 +1,187 @@
-# 🧬 Hybrid ZFNet-Quantum Neural Network for Pneumonia Detection
+# Hybrid Model for Pneumonia Detection
 
-<div align="center">
+This repository contains the implementation of a hybrid classical–quantum model for pneumonia detection from chest X‑ray images, developed as part of a secondary school research project (Středoškolská odborná činnost, SOČ).
+The model combines a ResNet‑50 feature extractor with PCA and a 6‑qubit variational quantum classifier implemented in PennyLane.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://www.python.org/)
-[![PennyLane](https://img.shields.io/badge/PennyLane-0.33%2B-orange)](https://pennylane.ai/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0%2B-red)](https://pytorch.org/)
+> ⚠️ **Disclaimer:** This code is a research and educational prototype and is **not** a medical device. It must not be used for clinical decision-making.
 
-*A hybrid classical-quantum machine learning pipeline for pneumonia classification from chest X-rays*
+***
 
-[Overview](#-overview) • [Architecture](#-architecture) • [Installation](#-installation) • [Usage](#-usage) • [Results](#-results) • [Citation](#-citation)
+## 1. Overview
 
-</div>
+The goal of this project is to explore whether a small variational quantum circuit (VQC) can act as a compact classifier on top of deep CNN features for medical imaging, specifically pneumonia detection from chest X‑ray images.
+A classical baseline using a fully connected neural network on the same features is used for comparison to assess whether the hybrid quantum–classical approach can reach comparable performance with far fewer trainable parameters.
 
-> ⚠️ **Project Status**: This project is actively under development. Anything and everything may and will change as research progresses.
+**Key ideas:**
 
----
+- Use a pre‑trained **ResNet‑50** as a feature extractor on chest X‑ray images.
+- Reduce the 2048‑dimensional feature vector to 64 dimensions using **PCA**.
+- Amplitude‑encode the 64‑dimensional vector into a **6‑qubit** quantum state and classify with a **variational quantum circuit**.
+- Compare the hybrid model against a purely classical baseline trained on the same PCA features.
 
-## 🔬 Overview
+***
 
-This repository implements a novel **hybrid quantum-classical neural network** for automated pneumonia detection from chest radiographs. The system combines classical deep convolutional feature extraction (ZFNet/ResNet50) with variational quantum circuits (VQC) for classification, targeting deployment on near-term noisy intermediate-scale quantum (NISQ) devices.
+## 2. Method
 
-### Key Features
+### 2.1 Architecture
 
-- **Hybrid Architecture**: Classical CNN (ZFNet/ResNet50) → Dimensionality Reduction (PCA/LDA) → Quantum Variational Circuit
-- **Quantum Encodings**: Amplitude encoding and angle encoding support
-- **Comprehensive Pipeline**: End-to-end workflow from raw X-rays to quantum inference
-- **Reproducible**: Fixed seeds, saved models, full experiment tracking
+The full pipeline consists of four stages:
 
----
+1. **Image preprocessing**  
+   - Resize to 224×224, convert to tensor, and normalize with standard ImageNet statistics (mean [0.485, 0.456, 0.406], std [0.229, 0.224, 0.225]).
 
-## 🏗️ Architecture
+2. **Classical backbone – ResNet‑50**  
+   - A pre‑trained ResNet‑50 with its final classification head replaced by an identity layer is used as a feature extractor.
+   - Each X‑ray is mapped to a 2048‑dimensional feature vector.
 
-```
-Input X-ray (224×224)
-        ↓
-┌───────────────────────┐
-│  Classical CNN        │
-│  (ZFNet / ResNet50)   │  → 2048D features
-└───────────────────────┘
-        ↓
-┌───────────────────────┐
-│  Dimensionality       │
-│  Reduction (PCA/LDA)  │  → 8D features
-└───────────────────────┘
-        ↓
-┌───────────────────────┐
-│  Quantum Encoding     │
-│  (Amplitude/Angle)    │  → 3 qubits
-└───────────────────────┘
-        ↓
-┌───────────────────────┐
-│  Variational Circuit  │
-│  (2-layer HEA)        │  → Expectation value
-└───────────────────────┘
-        ↓
-   Classification
-  (Normal/Pneumonia)
-```
+3. **Dimensionality reduction & normalization**  
+   - Features are standardized and reduced to **64 principal components** using PCA (chosen after comparing PCA, LDA, and SelectKBest).
+   - The 64‑dimensional vectors are L2‑normalized to satisfy amplitude encoding constraints.
 
-### Quantum Circuit Structure
+4. **Quantum classifier (VQC)**  
+   - The 64‑dimensional vector is **amplitude‑encoded** into a 6‑qubit state (Hilbert space dimension 64).
+   - A variational circuit with repeated layers of single‑qubit rotations (`qml.Rot`) and ring‑style CNOT entanglers is applied.
+   - The model measures a single Pauli‑Z expectation value and maps it to a probability of pneumonia, followed by a threshold scan to pick an operating point.
 
-- **Encoding Layer**: Amplitude embedding (normalized state preparation) or angle encoding (rotation gates)
-- **Variational Layers**: Hardware-efficient ansatz with RX-RY-RZ rotations + ring entanglement (CNOT)
-- **Measurement**: Pauli-Z expectation on qubit 0
-- **Trainable Parameters**: 2 layers × 3 qubits × 3 rotations = 18 parameters
+### 2.2 Classical baseline
 
----
+A classical baseline uses the same **64‑dimensional PCA features** but replaces the VQC with a small fully connected network:
 
-## 📊 Dataset
+- Linear → ReLU → Dropout → Linear → ReLU → Dropout → Linear → Sigmoid.
+- Trained with weighted binary cross‑entropy to handle class imbalance.
 
-**Chest X-Ray Images (Pneumonia)**  
-- **Source**: [Kaggle Chest X-Ray Dataset](https://www.kaggle.com/paultimothymooney/chest-xray-pneumonia)
-- **Classes**: NORMAL (1,583 train), PNEUMONIA (4,273 train)
-- **Format**: JPEG grayscale images, resized to 224×224
-- **Split**: 80% train, 10% validation, 10% test (stratified)
+***
 
----
+## 3. Dataset
 
-## 🛠️ Installation
+The project uses the public **Chest X‑Ray Images (Pneumonia)** dataset (Paul Mooney, Kaggle), containing pediatric chest X‑rays labeled as **Normal** or **Pneumonia**.
 
-### Prerequisites
-- Python 3.10+
-- CUDA 11.8+ (optional, for GPU acceleration)
-- 16GB RAM minimum (32GB recommended)
+- Total: **5856 images**.
+- Original split: `train`, `val`, `test`, but the original validation set only had **16 images**.
+- For stable validation, the original train+val sets were merged and re‑split 80/20 with stratification:
+  - Train: **4185** images  
+  - Validation: **1047** images  
+  - Test: **624** images (original test set, kept untouched)
 
-### Setup
+The dataset is **imbalanced**, with roughly **74.2 % pneumonia** in train/val and **62.5 % pneumonia** in the test set, which motivates class‑weighted loss functions and using balanced accuracy when evaluating.
+
+The notebook automatically downloads the dataset via `kagglehub` when run in Google Colab.
+
+## 4. Installation
+
+The code is designed to run in **Python 3.12** on **Google Colab** with GPU acceleration (T4 or A100 were used in the experiments).
+
+Install the main dependencies (on Colab this is done at the top of the notebook):
 
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/Hybrid-ZFNet-Quantum-Neural-Network-for-Pneumonia-Detection.git
-cd Hybrid-ZFNet-Quantum-Neural-Network-for-Pneumonia-Detection
-
-# Create conda environment
-conda env create -f environment.yml
-conda activate quantum-pneumonia
-
-# Verify installation
-python -c "import pennylane as qml; print(qml.__version__)"
+pip install \
+  pennylane pennylane-qiskit pennylane-lightning-gpu \
+  torch torchvision \
+  scikit-learn scikit-image \
+  numpy scipy pandas matplotlib seaborn \
+  opencv-python kagglehub optuna
 ```
 
-### Directory Structure
+The notebook uses PennyLane’s GPU‑accelerated backends (via `lightning.gpu` and NVIDIA cuQuantum) when available; otherwise it falls back to `default.qubit`.
 
-```
-.
-├── data/
-│   ├── chest_xray/          # Raw dataset (download separately)
-│   └── features/            # Extracted CNN features + metadata
-├── results/
-│   ├── params_*.npy         # Trained quantum parameters
-│   ├── results_*.json       # Experiment metrics
-│   └── pca_reducer_*.joblib # Fitted PCA/LDA transformers
-├── media/                   # Figures and visualizations
-├── docs/                    # Documentation and papers
-├── pneumonia_qml.ipynb      # Main Jupyter notebook
-├── environment.yml          # Conda environment specification
-└── README.md
-```
+***
 
----
+## 5. Running the experiments
 
-## 🚀 Usage
+1. **Open the notebook**
 
-**Configuration Options:**
-```bash
-export QSEED=42              # Random seed
-export LAYERS=2              # Quantum circuit layers
-export ITERS=80              # Training iterations
-export LR=0.03               # Learning rate
-export REDUCTION=pca         # pca or lda
-export ENCODING=amplitude    # amplitude or angle
-```
+   - Upload `pneumonia_qml.ipynb` to Google Colab or open it directly from your GitHub repo.
+   - Enable a **GPU runtime** in Colab (e.g., T4 or A100).
 
-### 3. Single Image Inference
+2. **Install dependencies**
 
-```python
-import joblib, numpy as np
-from PIL import Image
-import pennylane as qml
+   - Run the first cell that calls `pip install ...` to install all required packages.
 
-# Load trained model
-pca = joblib.load("results/pca_reducer_8d.joblib")
-params = np.load("results/params_amplitude_pca8d_2L.npy")
+3. **Configure experiment settings**
 
-# Preprocess image
-img = Image.open("test_xray.jpeg").convert('L').resize((128,128))
-features = pca.transform([np.array(img).flatten()])[0]
+   - The configuration is defined via a `dataclass` `ExperimentConfig`, with defaults such as:
+     - `project_name = "HybridResNet50QNNPneumonia"`  
+     - `device = "cuda"` (if available)  
+     - `reduction_method = "pca"`, `target_dims = 64`  
+     - `n_qubits = ceil(log2(64)) = 6`, `n_layers = 6`  
+     - `encoding_method = "amplitude"`  
+     - `batch_size = 16`, `learning_rate = 1e-3`, `epochs = 50`  
 
-# Quantum inference
-# ... (see notebook for full code)
-```
+4. **Step 1 – Feature extraction (ResNet‑50)**
 
----
+   - The notebook downloads the Kaggle dataset via `kagglehub`, builds PyTorch `DataLoader`s and runs ResNet‑50 to extract 2048‑dimensional features for each image.
+   - Features and metadata are saved into the `.results/` directory for reuse.
 
-## 📈 Results
+5. **Step 2 – Classical preprocessing (PCA pipeline)**
 
-### Model Performance (Test Set)
+   - The script merges the tiny original validation set with train, re‑splits 80/20 (stratified), and then fits a `StandardScaler + PCA(64)` pipeline.
+   - Transformed `X_train`, `X_val`, `X_test` and labels are stored as `.npy` files and the fitted preprocessing pipeline is saved with `joblib`.
 
-| Model | Accuracy | Macro F1 | AUC | Training Time |
-|-------|----------|----------|-----|---------------|
-| **Quantum (Amplitude + PCA)** | **75.6%** | **69.1%** | **76.5%** | 2h 15m |
-| Classical Baseline (LogReg) | 79.3% | 75.7% | 82.1% | 3m |
-| Classical SVM | 75.0% | 80.0% | - | 8m |
+6. **Step 3 – Classical baseline training**
 
-### Key Insights
+   - Train the classical MLP baseline on the 64‑dimensional features.
+   - Uses weighted BCE loss, Adam optimizer, cosine learning‑rate schedule and early stopping based on validation loss.
 
-✅ **Quantum model achieves 75.6% accuracy** with only 3 qubits and 18 trainable parameters  
-✅ **Competitive with classical baselines** despite NISQ hardware constraints  
-✅ **Strong AUC (76.5%)** demonstrates good class separation  
-⚠️ **Macro F1 gap (69.1% vs 75.7%)** indicates room for recall improvement on imbalanced data
+7. **Step 4 – Quantum model training**
 
-### Confusion Matrix (Quantum)
+   - Builds a PennyLane QNode with the chosen device (`lightning.gpu` where possible) and the custom ansatz (Rot + ring CNOT layers).
+   - Trains parameters with Adam and a cosine annealing learning‑rate schedule with warm‑up, using a **weighted MSE** loss in the label space \{-1, +1\} to handle class imbalance.
+   - Saves the best parameters, training history and test metrics to `.results/quantumresults.json`.
 
-```
-              Predicted
-           Normal  Pneumonia
-Actual  
-Normal       65       48
-Pneumonia    26      161
-```
+8. **Step 5 – Threshold scan & evaluation**
 
-**Recall (Pneumonia)**: 86.1% — critical for clinical safety  
-**Precision (Pneumonia)**: 77.0% — acceptable false positive rate
+   - On the test set, the model outputs continuous probabilities; a threshold scan over values 0.50–0.90 is used to study the trade‑off between sensitivity and specificity and to compute balanced accuracy.
 
----
+***
 
-## 🔧 Advanced Features
+## 6. Results
 
-### Error Mitigation (Real Hardware)
+### 6.1 Classical vs hybrid performance
 
-```python
-# Zero-noise extrapolation for IBM Quantum backends
-from qiskit.providers.aer.noise import NoiseModel
-# See docs/error_mitigation.md
-```
+On the 624‑image test set (62.5 % pneumonia, 37.5 % normal), the following metrics were obtained:
 
-### Hyperparameter Sweep
+| Metric             | Classical (ResNet‑50 + MLP) | Hybrid (ResNet‑50 + VQC) | Difference |
+|--------------------|-----------------------------|---------------------------|-----------|
+| Accuracy           | 85.90 %                     | 71.63 %                   | −14.27 %  |
+| Precision          | 83.41 %                     | 75.91 %                   | −7.50 %   |
+| Recall (Sensitivity) | 97.95 %                  | 80.00 %                   | −17.95 %  |
+| Specificity        | 70.51 %                     | 57.69 %                   | −12.82 %  |
+| F1‑score           | 0.9022                      | 0.6915                    | −0.2107   |
+| AUC‑ROC            | 0.912                       | 0.7445                    | −0.1675   |
+| Trainable params (classifier) | 164,865        | 108                       | −152,757  |
+| Training time      | ~9 s                        | ~135 min                  | —         |
 
-```python
-# Grid search over layers, encoding, and reduction methods
-for layers in [1,2,3,4]:
-    for encoding in ['amplitude', 'angle']:
-        # ... train and log results
-```
+The hybrid model does **not** yet match the classical baseline in raw predictive performance, but it achieves a non‑trivial AUC (~0.74) with a **dramatically smaller number of trainable parameters** in the decision stage, which is important in the NISQ regime.
 
-### Ensemble Quantum Classifiers
+### 6.2 Behaviour and interpretation
 
-```python
-# Train 5 models with different seeds, average predictions
-ensemble_accuracy = 78.2%  # +2.6pp over single model
-```
+- The hybrid model shows relatively high **sensitivity (80 %)** but lower specificity, meaning it tends to over‑call pneumonia rather than miss it.
+- This behaviour can be acceptable in a screening setting (better to flag suspicious cases than to miss disease), but it increases the number of false positives compared to the classical baseline.
+- A noticeable **domain shift** between train/validation and test label distributions (pneumonia share drops from ~74.2 % to 62.5 %) likely contributes to the performance gap and increased false positives on the test set.
 
----
+***
 
-## 📚 Documentation
+## 7. Limitations & future work
 
-- **[SOČ Technical Report](docs/soc.pdf)** — Full methodology and results (Czech)
-- **[Quantum Circuit Design](docs/circuit_design.md)** — Ansatz selection and optimization
-- **[Feature Engineering](docs/features.md)** — CNN selection and dimensionality reduction
-- **[Reproducibility Guide](docs/reproducibility.md)** — Exact steps to replicate results
+Some key limitations identified in the thesis:
 
----
+- Training the VQC on a classical GPU simulator is expensive; a 50‑epoch run with 6 qubits and 6 layers took about **135 minutes**, limiting hyperparameter exploration.
+- Only a single public pediatric dataset from one institution was used, so generalization to other populations, hospitals or acquisition protocols is unknown.
+- The 2048→64 PCA reduction may discard clinically relevant information, which caps the achievable performance of the quantum classifier.
+- The quantum model was trained on an **ideal simulator** without realistic noise; performance on real NISQ hardware would likely be worse without explicit error‑mitigation techniques.
 
-## 🎯 Roadmap
+Future directions suggested by the work include:
 
-- [ ] Implement data re-uploading for higher expressivity
-- [ ] Deploy on IBM Quantum hardware with error mitigation
-- [ ] Extend to multi-class (COVID-19, viral, bacterial pneumonia)
-- [ ] Quantum transfer learning from pre-trained circuits
-- [ ] Real-time clinical interface (Flask/Streamlit app)
+- Running the VQC on real hardware (e.g. IBM Quantum) with noise mitigation.  
+- Exploring alternative quantum architectures (e.g. quantum kernels, quanvolutional layers, ensembles with classical models).  
+- Using richer, multi‑institutional datasets and domain‑adaptation techniques to address dataset shift.
 
----
+***
 
-## 📖 Citation
+## 8. Citation
 
-If you use this work in your research, please cite:
+If you use this code or ideas from the project, please cite the associated SOČ thesis (Czech, English annotation in the front matter):
 
-```bibtex
-@misc{forgo2025hybrid,
-  title={Hybrid ZFNet-Quantum Neural Network for Pneumonia Detection},
-  author={Forgó, Michal},
-  year={2025},
-  howpublished={\url{https://github.com/mforgo/Hybrid-ZFNet-Quantum-Neural-Network-for-Pneumonia-Detection/branches}},
-  note={Student Research Competition (SOČ) project}
-}
-```
+> M. Forg, *Hybridní model pro detekci pneumonie / Hybrid Model for Pneumonia Detection*, Středoškolská odborná činnost (SOČ), 2026.
 
----
-
-## 🤝 Contributing
-
-Contributions welcome! Please:
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see [LICENSE](LICENSE) file.
-
----
-
-## 🙏 Acknowledgments
-
-- **Dataset**: Kermany et al., *Cell*, 2018
-- **PennyLane Team**: Quantum ML framework
-- **NTC - Nové technologie - výzkumné centrum**: Západočeská univerzita v Plzni for quantum computing resources and support
-- **Project Supervisor**: Ing. Jan Boháč
-
----
-
-<div align="center">
-
-**⭐ Star this repo if you find it useful!**
-
-Made with ❤️ for quantum machine learning research
-
-</div>
+You can also link to this repository and mention that it implements a hybrid ResNet‑50 + VQC pipeline for pneumonia detection using PennyLane and PyTorch.
