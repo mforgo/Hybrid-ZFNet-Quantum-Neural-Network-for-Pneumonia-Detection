@@ -26,5 +26,6 @@ docs/*.xml
 docs/*.nav
 docs/*.snm
 docs/*.bcf*
+docs/*.equ
 !docs/soc.tex
 !docs/literatura.bib
