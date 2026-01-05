@@ -80,36 +80,27 @@ top=25mm,
 % ================= TITULNÍ STRANA =================
 \begin{titlepage}
     \begin{center}
-        % Name of the school at the top
-        \Large \textbf{\skola} \\ % 
-        \vspace{3cm}
+        % 1. Název školy nahoře [cite: 1]
+        \Large \textbf{\skola} \\ 
+        \vspace{5cm} % Posun dolů (upravte podle potřeby)
 
-        % Type of thesis
-        \Huge \textbf{\typPrace} \\ % 
-        \vspace{0.5cm}
+        % 2. Maturitní práce [cite: 2]
+        \Huge \textbf{\typPrace} \\ 
+        \vspace{2cm} % Posun dolů
         
-        % Code and Title
-        \LARGE \kodPrace \ \textbf{\nazevPrace} \\ % 
-        \vspace{0.5cm}
+        % 3. Číslo a název projektu [cite: 3]
+        % Spojíme kód práce a název do jednoho řádku, jak je v šabloně
+        \LARGE \textbf{\kodPrace \ \ \nazevPrace} \\ 
         
-        % Subtitle
-        \Large \textit{\podNazev} \\ % 
-        \vspace{2cm}
-
-        % School Year
-        \Large Školní rok \skolniRok \\ % [cite: 379]
-        
-        \vfill
     \end{center}
 
-    % Authors aligned to the bottom or specific layout
-    \begin{flushleft}
-        \Large
-        \textbf{Autor:} \\
-        \autor, \trida \\ % 
-        \vspace{0.5cm}
-        \textbf{Vedoucí práce:} \konzultant % [cite: 388]
-    \end{flushleft}
+    \vfill % Vytlačí text níže až na samý spodek stránky
+
+    % 4. Školní rok a Autor na jednom řádku [cite: 4, 5]
+    % \noindent zruší odsazení odstavce, \hfill zarovná autora doprava
+    \noindent
+    \Large
+    Školní rok \skolniRok \hfill \autor, \trida 
 \end{titlepage}
 
 % ================= PROHLÁŠENÍ =================
