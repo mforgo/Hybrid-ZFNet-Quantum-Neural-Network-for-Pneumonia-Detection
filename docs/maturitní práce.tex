@@ -195,7 +195,7 @@ Rušení kvantových stavů může v~mnoha případech zcela degradovat teoretic
 Tato práce se pokouší na tuto otázku odpovědět prostřednictvím návrhu hybridní architektury.
 Namísto snahy o~čistě kvantové řešení, které by v~současnosti naráželo na hardwarové limity, volíme kombinovaný přístup.
 Spojujeme osvědčenou klasickou architekturu ResNet, která slouží k~efektivní extrakci příznaků z~medicínských snímků, s~variačním kvantovým obvodem (VQC).
-Cílem je zjistit, zda i~malé množství "šumících" qubitů zapojených do~rozhodovacího procesu může přinést měřitelnou výhodu v~přesnosti detekce pneumonie, nebo zda je vliv šumu v~současné generaci hardwaru stále příliš dominantní.
+Cílem je zjistit, zda i~malé množství „šumících“ qubitů zapojených do~rozhodovacího procesu může přinést měřitelnou výhodu v~přesnosti detekce pneumonie, nebo zda je vliv šumu v~současné generaci hardwaru stále příliš dominantní.
 
 \chapter{Teoretická část} \label{chap:teorie}
 
@@ -240,7 +240,7 @@ Mezi hlavní problémy manuální diagnostiky patří:
 \end{enumerate}
 
 Právě tyto limitace otevírají prostor pro aplikaci systémů počítačového vidění a~umělé inteligence.
-Algoritmy, jako jsou konvoluční neuronové sítě (CNN), a~v kontextu této práce i~hybridní kvantové sítě, mají potenciál sloužit jako "druhý pár očí", který dokáže konzistentně detekovat jemné vzory v~obraze, jež mohou lidskému oku uniknout.
+Algoritmy, jako jsou konvoluční neuronové sítě (CNN), a~v kontextu této práce i~hybridní kvantové sítě, mají potenciál sloužit jako „druhý pár očí“, který dokáže konzistentně detekovat jemné vzory v~obraze, jež mohou lidskému oku uniknout.
 
 \section{Konvoluční neuronové sítě a~architektura ResNet} \label{sec:resnet}
 
@@ -290,7 +290,7 @@ Základní informační jednotkou je kvantový bit, zkráceně \textbf{qubit} \c
 \subsection{Qubit a~superpozice}
 Klasický bit se může nacházet pouze v~jednom ze dvou diskrétních stavů: 0 nebo 1. Naproti tomu qubit může existovat v~tzv.
 superpozici obou těchto stavů současně. Matematicky qubit reprezentujeme jako vektor v~dvourozměrném Hilbertově prostoru.
-Používáme k~tomu Diracovu "ket" notaci:
+Používáme k~tomu Diracovu „ket“ notaci:
 
 \begin{equation}
     |\psi\rangle = \alpha|0\rangle + \beta|1\rangle
@@ -305,7 +305,7 @@ Pro tyto amplitudy musí platit normalizační podmínka:
 \end{equation}
 \myequation{Normalizační podmínka pro amplitudy qubitu, kde \(|\alpha|^2 + |\beta|^2 = 1\).}
 
-To znamená, že pokud změříme qubit ve~stavu superpozice, "zhroutí" se do~stavu $|0\rangle$ s~pravděpodobností $|\alpha|^2$ nebo do~stavu $|1\rangle$ s~pravděpodobností $|\beta|^2$.
+To znamená, že pokud změříme qubit ve~stavu superpozice, „zhroutí“ se do~stavu $|0\rangle$ s~pravděpodobností $|\alpha|^2$ nebo do~stavu $|1\rangle$ s~pravděpodobností $|\beta|^2$.
 Právě tato pravděpodobnostní povaha je zásadním rozdílem oproti deterministickému klasickému bitu.
 
 \subsection{Blochova sféra}
@@ -324,7 +324,7 @@ Libovolný čistý stav qubitu lze zapsat pomocí úhlů $\theta$ a~$\phi$ jako 
 \myequation{Vyjádření stavu qubitu \(|\psi\rangle\) na Blochově sféře pomocí úhlů \(\theta\) a~\(\phi\), kde póly odpovídají stavům \(|0\rangle\) a~\(|1\rangle\).}
 
 Tato reprezentace je klíčová pro pochopení fungování kvantových neuronových sítí.
-Trénování sítě v~podstatě znamená hledání optimálních rotací stavového vektoru na této sféře tak, aby při měření dopadl výsledek do~požadované třídy (např. "pneumonie").
+Trénování sítě v~podstatě znamená hledání optimálních rotací stavového vektoru na této sféře tak, aby při měření dopadl výsledek do~požadované třídy (např. „pneumonie“).
 
 \subsection{Kvantová hradla (Quantum Gates)}
 Stejně jako klasické počítače používají logická hradla (AND, OR, NOT), kvantové algoritmy jsou sestaveny z~kvantových hradel, která provádějí unitární operace na qubitech.
@@ -389,7 +389,6 @@ kde $M$ je operátor měření (pozorovatelná veličina, typicky Pauli-Z operá
 Trénink sítě pak spočívá v~hledání takových parametrů $\boldsymbol{\theta}$, které minimalizují chybovou funkci na trénovací množině.
 
 \subsection{Problém barren plateaus} \label{subsec:barren_plateaus_theory}
-
 Jedním z~nejvýznamnějších teoretických i~praktických limitů současných variačních kvantových algoritmů (VQA) je jev označovaný jako \textit{barren plateaus}. Při trénování parametrizovaných kvantových obvodů pomocí gradientních metod se může stát, že krajina nákladové funkce je téměř všude extrémně plochá: změna libovolného parametru vede jen k~zanedbatelné změně hodnoty chybové funkce. v~takové situaci gradienty mířící k~optimu prakticky mizí a~optimalizace se stává numericky neproveditelnou, zejména pro větší počty qubitů.
 
 Formálně se barren plateaus popisují pomocí rozptylu gradientů nákladové funkce \(C(\boldsymbol{\theta})\) podle jednotlivých parametrů \(\theta_i\). Pro jednoduchost uvažujme jeden parametr \(\theta_i\); zajímá nás náhodná proměnná \(\partial_{\theta_i} C(\boldsymbol{\theta})\), kde \(\boldsymbol{\theta}\) jsou náhodně inicializované parametry ansatzu. v~mnoha situacích, zejména pro hluboké „náhodné“ obvody s~globální nákladovou funkcí, lze ukázat, že rozptyl gradientu klesá alespoň exponenciálně s~počtem qubitů \(n\):
